@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bức Thư Tình Gửi Quỳnh Anh</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+        }
+
+        /* Canvas hiệu ứng bong bóng chứa ảnh bay từ trên xuống */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Phong bì thư ở giữa */
+        .envelope-container {
+            position: relative;
+            z-index: 10;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .envelope-container:hover {
+            transform: scale(1.05);
+        }
+
+        .envelope {
+            width: 280px;
+            height: 180px;
+            background: #fff;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Nắp phong bì */
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            border-top: 100px solid #e0e0e0;
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            z-index: 3;
+        }
+
+        .envelope-text {
+            position: relative;
+            z-index: 4;
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-top: 40px;
+            pointer-events: none;
+        }
+
+        /* Khi mở thư: Phong bì ẩn đi */
+        .envelope-container.open .envelope::before {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .envelope-container.open {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+            position: absolute;
+        }
+
+        /* Bức thư */
+        .letter-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.7);
+            width: 90%;
+            max-width: 600px;
+            background: #fff;
+            padding: 35px 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+
+        .letter-modal.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .letter-title {
+            font-size: 22px;
+            color: #d63384;
+            margin-bottom: 15px;
+            font-family: serif;
+            font-weight: bold;
+        }
+
+        .letter-content {
+            font-size: 15px;
+            color: #444;
+            line-height: 1.7;
+            text-align: left;
+            max-height: 360px;
+            overflow-y: auto;
+            padding-right: 10px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* Tùy chỉnh thanh cuộn */
+        .letter-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .letter-content::-webkit-scrollbar-thumb {
+            background-color: #f0a5c0;
+            border-radius: 3px;
+        }
+
+        .close-btn {
+            margin-top: 20px;
+            background: #d63384;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #b02a6b;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas bong bóng chứa ảnh -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Phong bì thư bấm vào để mở -->
+    <div class="envelope-container" id="envelopeBtn" onclick="openLetter()">
+        <div class="envelope">
+            <div class="envelope-text">💌 Chạm để mở thư</div>
+        </div>
+    </div>
+
+    <!-- Bức thư hiện ra -->
+    <div class="letter-modal" id="letterModal">
+        <div class="letter-title">Gửi Quỳnh Anh ❤️</div>
+        <div class="letter-content" id="letterText"></div>
+        <button class="close-btn" onclick="closeLetter()">Đóng thư</button>
+    </div>
+
+    <script>
+        // Nội dung bức thư
+        const fullText = `Chúng mình đã chính thức yêu nhau được 2 tháng này rồi bé.
+Đây là bức thư tình thứ 2 trong chuyên mục mỗi tháng 1 bó hoa kỉ niệm của chúng ta và 1 bức thư tình gửi đến bé.
+Tháng thứ 2 đầy ắp những niềm vui, nhưng cũng có một số khoảng lặng nhỉ. Cảm ơn vì sau tất cả vẫn cho anh tiếp tục được yêu thương em, cho anh được có cơ hội chứng minh lại những điều anh từng làm chưa tốt. Em có thể dành một chút thời gian nghe anh già này sến súa thật lòng một chút được không.
+
+Anh biết sau hôm đó dù mình đã quay lại nhưng sự tự nhiên của 2 ta phần nào đã không còn được như ban đầu. Anh chỉ muốn nói là anh xin lỗi vì lúc đó đã chưa được tốt, kể cả ngay sau khi em nói ra điều làm em buồn thì anh cũng đã thực sự không bình tĩnh mà cứ cố gắng giải thích, ép em phải thay đổi suy nghĩ ngay lập tức từ những gì tự mình vừa chứng kiến mà hoàn toàn không để cho em một chút thời gian nào, rồi dần dần chính anh là người tự đẩy 2 ta ra xa khiến hôm đó em muốn dừng lại. Vào thời điểm em nói “anh biến mất khỏi đời tôi” đi thực sự anh rất buồn và rất lo lắng vì làm tổn thương em như thế. Khi đó thật sự nếu có điều kiện ở gần sân bay thì anh sẽ không cần suy nghĩ mà bay thẳng về để được gặp em.
+
+Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được, nhưng điều duy nhất anh muốn nói với em là kể từ thời điểm mình yêu nhau, em luôn là điều rất quan trọng với anh, chưa một giây nào anh để những thứ khác làm mình phải lăn tăn, đắn đo với em cả, anh luôn muốn có một tình yêu All in với em. Kể cả những điều anh từng nói đến chuyện lâu dài của 2 đứa cũng là điều thật lòng anh nói, vì anh thật sự nghiêm túc với mối quan hệ này, với em. Anh biết những gì em chứng kiến dù thực hay chỉ là hiểu lầm thì em cũng cần thời gian thích nghi. Buồn thật nhỉ, nhưng lần này anh sẽ không mất bình tĩnh nữa, vì anh tin đến một thời điểm nào đó mình sẽ lại được tự nhiên như xưa và còn tốt hơn thế nữa.
+
+Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.
+
+Anh yêu Quỳnh Anh của anh nhiều lắm!
+
+Nam Yêu Quỳnh Anh.`;
+
+        // --- 1. HIỆU ỨNG BONG BÓNG CHỨA ẢNH BAY TỪ TRÊN XUỐNG ---
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Danh sách các tên file ảnh bạn chuẩn bị sẵn (hãy đổi tên file cho đúng với ảnh của bạn)
+        const imageSources = [
+            'anh1.jpg',
+            'anh2.jpg',
+            'anh3.jpg',
+            'anh4.jpg',
+            'anh5.jpg'
+        ];
+
+        // Tải trước các hình ảnh vào đối tượng Image trong JavaScript
+        const loadedImages = [];
+        let imagesLoadedCount = 0;
+
+        imageSources.forEach((src, index) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = () => {
+                imagesLoadedCount++;
+            };
+            loadedImages.push(img);
+        });
+
+        // Tạo danh sách bong bóng với các kích cỡ và tốc độ khác nhau
+        const bubbles = [];
+        const bubbleCount = 20; // Số lượng bong bóng vừa phải để màn hình thoáng và rõ ảnh
+
+        for (let i = 0; i < bubbleCount; i++) {
+            bubbles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                radius: Math.random() * 35 + 35, // Kích cỡ to (đường kính từ 70px đến 140px)
+                speedY: Math.random() * 0.8 + 0.4, // Bay nhẹ nhàng
+                speedX: (Math.random() - 0.5) * 0.4, // Lượn gió nhẹ
+                opacity: Math.random() * 0.3 + 0.7,
+                imageIndex: Math.floor(Math.random() * imageSources.length)
+            });
+        }
+
+        function animateBubbles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            bubbles.forEach(b => {
+                b.y += b.speedY;
+                b.x += b.speedX;
+
+                // Reset vị trí khi bay xuống khỏi màn hình
+                if (b.y > canvas.height + b.radius) {
+                    b.y = -b.radius * 2;
+                    b.x = Math.random() * canvas.width;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = b.opacity;
+
+                // Vẽ bong bóng hình tròn
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.clip(); // Cắt khung hình theo hình tròn của bong bóng
+
+                const img = loadedImages[b.imageIndex];
+                if (img && img.complete && img.naturalWidth !== 0) {
+                    // Vẽ ảnh lấp đầy khung tròn bong bóng
+                    ctx.drawImage(img, b.x - b.radius, b.y - b.radius, b.radius * 2, b.radius * 2);
+                } else {
+                    // Hiển thị màu hồng tạm thời nếu chưa tải xong ảnh
+                    ctx.fillStyle = '#ffb6c1';
+                    ctx.fill();
+                }
+
+                ctx.restore();
+
+                // Viền bóng lấp lánh bên ngoài bong bóng
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            });
+
+            requestAnimationFrame(animateBubbles);
+        }
+        animateBubbles();
+
+
+        // --- 2. HỆ THỐNG ÂM THANH DU DƯƠNG (Web Audio API) ---
+        let audioCtx = null;
+        let isPlaying = false;
+        let timerNode = null;
+
+        function playRomanticMelody() {
+            if (isPlaying) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                isPlaying = true;
+
+                const notes = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50];
+                const melodyIndex = [0, 2, 4, 2, 5, 4, 3, 2, 1, 0, 3, 2, 1, 0];
+                let step = 0;
+
+                function playNextNote() {
+                    if (!isPlaying || !audioCtx) return;
+                    
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(notes[melodyIndex[step]], audioCtx.currentTime);
+
+                    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.2);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.8);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 1.8);
+
+                    step = (step + 1) % melodyIndex.length;
+                    timerNode = setTimeout(playNextNote, 1200);
+                }
+
+                playNextNote();
+            } catch (e) {
+                console.log("Trình duyệt chặn Audio Auto-play:", e);
+            }
+        }
+
+        function stopRomanticMelody() {
+            isPlaying = false;
+            if (timerNode) clearTimeout(timerNode);
+            if (audioCtx) {
+                audioCtx.close();
+                audioCtx = null;
+            }
+        }
+
+
+        // --- 3. HIỆU ỨNG GÕ CHỮ (TYPING EFFECT) & MỞ THƯ ---
+        let typingTimer = null;
+
+        function startTypingEffect() {
+            const textContainer = document.getElementById('letterText');
+            textContainer.innerHTML = "";
+            let index = 0;
+
+            function type() {
+                if (index < fullText.length) {
+                    textContainer.innerHTML += fullText.charAt(index);
+                    index++;
+                    textContainer.scrollTop = textContainer.scrollHeight;
+                    typingTimer = setTimeout(type, 35);
+                }
+            }
+            type();
+        }
+
+        function openLetter() {
+            const container = document.getElementById('envelopeBtn');
+            const modal = document.getElementById('letterModal');
+
+            container.classList.add('open');
+            setTimeout(() => {
+                modal.classList.add('show');
+                startTypingEffect();
+            }, 300);
+
+            playRomanticMelody();
+        }
+
+        function closeLetter() {
+            const container = document.getElementById('envelopeBtn');
+            const modal = document.getElementById('letterModal');
+
+            if (typingTimer) clearTimeout(typingTimer);
+            modal.classList.remove('show');
+            setTimeout(() => {
+                container.classList.remove('open');
+            }, 300);
+
+            stopRomanticMelody();
+        }
+    </script>
+</body>
+</html>
