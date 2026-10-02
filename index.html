@@ -22,7 +22,7 @@
             position: relative;
         }
 
-        /* Canvas hiệu ứng bong bóng 3D cầu vồng bay ngang */
+        /* Canvas hiệu ứng gió hồng và bong bóng cầu vồng */
         #bgCanvas {
             position: fixed;
             top: 0;
@@ -169,7 +169,7 @@
 </head>
 <body>
 
-    <!-- Canvas bong bóng bay ngang -->
+    <!-- Canvas hiệu ứng gió hồng và bong bóng -->
     <canvas id="bgCanvas"></canvas>
 
     <!-- Phong bì thư bấm vào để mở -->
@@ -201,7 +201,7 @@ Anh yêu Quỳnh Anh của anh nhiều lắm!
 
 Nam Yêu Quỳnh Anh.`;
 
-        // --- 1. HIỆU ỨNG BONG BÓNG CẦU VỒNG BAY NGANG ---
+        // --- 1. HIỆU ỨNG GÓ HỒNG & BONG BÓNG CẦU VỒNG BAY NGANG ---
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -211,6 +211,21 @@ Nam Yêu Quỳnh Anh.`;
         }
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
+
+        // Tạo các dải gió màu hồng thổi ngang màn hình
+        const winds = [];
+        const windCount = 12;
+        for (let i = 0; i < windCount; i++) {
+            winds.push({
+                y: Math.random() * canvas.height,
+                length: Math.random() * 300 + 200,
+                speed: Math.random() * 1.5 + 0.8,
+                opacity: Math.random() * 0.15 + 0.05,
+                amplitude: Math.random() * 40 + 20,
+                frequency: Math.random() * 0.01 + 0.005,
+                x: Math.random() * canvas.width - canvas.width
+            });
+        }
 
         const imageSources = [
             'anh (1).jpg',
@@ -228,15 +243,15 @@ Nam Yêu Quỳnh Anh.`;
         });
 
         const bubbles = [];
-        const bubbleCount = 18; 
+        const bubbleCount = 16; 
 
         for (let i = 0; i < bubbleCount; i++) {
             bubbles.push({
-                x: Math.random() * canvas.width - canvas.width, // Trải đều từ ngoài màn hình bên trái
+                x: Math.random() * canvas.width - canvas.width,
                 y: Math.random() * canvas.height,
-                radius: Math.random() * 40 + 45, // Kích cỡ to rõ ràng
-                speedX: Math.random() * 0.7 + 0.4, // Bay ngang từ trái qua phải
-                speedY: (Math.random() - 0.5) * 0.3, // Lượn sóng nhẹ lên xuống theo chiều gió
+                radius: Math.random() * 40 + 45,
+                speedX: Math.random() * 0.6 + 0.4,
+                speedY: (Math.random() - 0.5) * 0.3,
                 wobbleSpeed: Math.random() * 0.02 + 0.01,
                 wobbleDist: Math.random() * 15 + 5,
                 initialY: Math.random() * canvas.height,
@@ -245,15 +260,44 @@ Nam Yêu Quỳnh Anh.`;
             });
         }
 
-        function animateBubbles() {
+        function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            bubbles.forEach(b => {
-                b.x += b.speedX; // Dịch chuyển sang phải
-                b.angle += b.wobbleSpeed;
-                b.y = b.initialY + Math.sin(b.angle) * b.wobbleDist; // Lượn nhẹ
+            // Vẽ hiệu ứng gió hồng thổi ngang
+            winds.forEach(w => {
+                w.x += w.speed;
+                if (w.x > canvas.width + w.length) {
+                    w.x = -w.length;
+                    w.y = Math.random() * canvas.height;
+                }
 
-                // Nếu bay qua hẳn bên phải màn hình thì reset vòng lại từ bên trái
+                ctx.save();
+                ctx.beginPath();
+                // Vẽ dải sóng uốn lượn mềm mại mô phỏng cơn gió
+                for (let px = 0; px < w.length; px += 10) {
+                    let currentX = w.x + px;
+                    let currentY = w.y + Math.sin(currentX * w.frequency) * w.amplitude;
+                    if (px === 0) ctx.moveTo(currentX, currentY);
+                    else ctx.lineTo(currentX, currentY);
+                }
+
+                let grad = ctx.createLinearGradient(w.x, w.y, w.x + w.length, w.y);
+                grad.addColorStop(0, 'rgba(255, 105, 180, 0)');
+                grad.addColorStop(0.5, `rgba(255, 182, 193, ${w.opacity})`);
+                grad.addColorStop(1, 'rgba(255, 105, 180, 0)');
+
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = Math.random() * 30 + 20; // Dải gió dày mềm mại
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            // Vẽ bong bóng cầu vồng chứa ảnh
+            bubbles.forEach(b => {
+                b.x += b.speedX;
+                b.angle += b.wobbleSpeed;
+                b.y = b.initialY + Math.sin(b.angle) * b.wobbleDist;
+
                 if (b.x > canvas.width + b.radius * 2) {
                     b.x = -b.radius * 2;
                     b.initialY = Math.random() * canvas.height;
@@ -261,7 +305,7 @@ Nam Yêu Quỳnh Anh.`;
 
                 ctx.save();
 
-                // 1. Vẽ ảnh lọt lòng bên trong bong bóng
+                // 1. Vẽ ảnh lọt lòng
                 ctx.save();
                 ctx.beginPath();
                 ctx.arc(b.x, b.y, b.radius - 2, 0, Math.PI * 2);
@@ -279,17 +323,16 @@ Nam Yêu Quỳnh Anh.`;
                 }
                 ctx.restore();
 
-                // 2. Vỏ bong bóng 7 sắc cầu vồng (Hiệu ứng xà phòng ánh kim lung linh)
+                // 2. Vỏ bong bóng 7 sắc cầu vồng
                 const rainbowGlow = ctx.createRadialGradient(
                     b.x - b.radius * 0.3, b.y - b.radius * 0.3, b.radius * 0.1,
                     b.x, b.y, b.radius
                 );
-                // Dải màu pha trộn 7 sắc cầu vồng mờ ảo
                 rainbowGlow.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
-                rainbowGlow.addColorStop(0.3, 'rgba(255, 182, 193, 0.25)'); // Hồng nhạt
-                rainbowGlow.addColorStop(0.5, 'rgba(255, 255, 150, 0.25)'); // Vàng nhạt
-                rainbowGlow.addColorStop(0.7, 'rgba(150, 222, 255, 0.25)'); // Xanh dương nhạt
-                rainbowGlow.addColorStop(0.9, 'rgba(221, 160, 221, 0.3)');  // Tím nhạt
+                rainbowGlow.addColorStop(0.3, 'rgba(255, 182, 193, 0.25)');
+                rainbowGlow.addColorStop(0.5, 'rgba(255, 255, 150, 0.25)');
+                rainbowGlow.addColorStop(0.7, 'rgba(150, 222, 255, 0.25)');
+                rainbowGlow.addColorStop(0.9, 'rgba(221, 160, 221, 0.3)');
                 rainbowGlow.addColorStop(1, 'rgba(255, 255, 255, 0.6)');
 
                 ctx.beginPath();
@@ -297,7 +340,7 @@ Nam Yêu Quỳnh Anh.`;
                 ctx.fillStyle = rainbowGlow;
                 ctx.fill();
 
-                // 3. Điểm sáng phản chiếu bóng bẩy (Specular Highlights tạo chiều sâu 3D)
+                // 3. Điểm sáng phản chiếu 3D
                 ctx.beginPath();
                 ctx.arc(b.x - b.radius * 0.35, b.y - b.radius * 0.35, b.radius * 0.2, 0, Math.PI * 2);
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
@@ -311,12 +354,12 @@ Nam Yêu Quỳnh Anh.`;
                 ctx.restore();
             });
 
-            requestAnimationFrame(animateBubbles);
+            requestAnimationFrame(animate);
         }
-        animateBubbles();
+        animate();
 
 
-        // --- 2. HỆ THỐNG ÂM THANH DU DƯƠNG (Web Audio API) ---
+        // --- 2. HỆ THỐNG ÂM THANH DU DƯƠNG ---
         let audioCtx = null;
         let isPlaying = false;
         let timerNode = null;
@@ -370,7 +413,7 @@ Nam Yêu Quỳnh Anh.`;
         }
 
 
-        // --- 3. HIỆU ỨNG GÕ CHỮ (TYPING EFFECT) & MỞ THƯ ---
+        // --- 3. HIỆU ỨNG GÕ CHỮ & MỞ THƯ ---
         let typingTimer = null;
 
         function startTypingEffect() {
