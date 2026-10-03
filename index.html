@@ -23,7 +23,7 @@
             perspective: 1200px;
         }
 
-        /* Canvas chỉ dùng cho dải lụa nền để nhẹ CPU nhất */
+        /* Canvas hiệu ứng gió & bong bóng */
         #bgCanvas {
             position: fixed;
             top: 0;
@@ -34,57 +34,7 @@
             z-index: 1;
         }
 
-        /* Lớp chứa các bong bóng ảnh/trái tim tối ưu hóa bằng CSS GPU (Không giật lag) */
-        #bubbleContainer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 2;
-            overflow: hidden;
-        }
-
-        .floating-bubble {
-            position: absolute;
-            will-change: transform;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            user-select: none;
-        }
-
-        /* Bong bóng ảnh */
-        .photo-bubble {
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.7);
-            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5), 0 4px 15px rgba(255, 105, 180, 0.3);
-            background: #ffb6c1;
-        }
-
-        .photo-bubble img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Bong bóng trái tim / ký tự */
-        .heart-bubble {
-            font-size: 28px;
-            text-shadow: 0 0 10px rgba(255, 105, 180, 0.8);
-        }
-
-        @keyframes floatUpRight {
-            0% {
-                transform: translate3d(-150px, var(--startY), 0);
-            }
-            100% {
-                transform: translate3d(calc(100vw + 150px), var(--endY), 0);
-            }
-        }
-
+        /* Nút điều khiển nhạc riêng */
         .music-control {
             position: fixed;
             top: 20px;
@@ -109,6 +59,7 @@
             transform: scale(1.05);
         }
 
+        /* --- DÒNG CHỮ 14/8 ~ 14/10 Ở PHÍA TRÊN BỨC THƯ --- */
         @keyframes dateGlowPulse {
             0% {
                 text-shadow: 0 0 10px rgba(255, 105, 180, 0.5), 0 0 20px rgba(255, 20, 147, 0.3), 0 0 35px rgba(255, 192, 203, 0.2);
@@ -137,6 +88,7 @@
             animation: dateGlowPulse 3s infinite ease-in-out;
         }
 
+        /* Phong bì thư ở giữa */
         .envelope-container {
             position: relative;
             z-index: 10;
@@ -198,6 +150,7 @@
             position: absolute;
         }
 
+        /* --- BỨC THƯ CHÍNH & 3 DÒNG CUỐI: CHUNG TỌA ĐỘ 3D --- */
         .letter-modal, .ending-text-box {
             position: fixed;
             top: 55%;
@@ -207,6 +160,7 @@
             will-change: transform, opacity;
         }
 
+        /* 1. Bức thư chính */
         .letter-modal {
             width: 90%;
             max-width: 550px;
@@ -267,6 +221,7 @@
             border-radius: 3px;
         }
 
+        /* 2. Khung chứa 3 dòng chữ cuối */
         @keyframes textGlowPulse {
             0% {
                 text-shadow: 0 0 10px rgba(255, 105, 180, 0.4), 0 0 20px rgba(255, 20, 147, 0.2), 0 0 30px rgba(255, 192, 203, 0.1);
@@ -330,6 +285,7 @@
 </head>
 <body>
 
+    <!-- THẺ NHẠC LOVE2.MP3 -->
     <audio id="bgMusic" loop>
         <source src="love2.mp3" type="audio/mp3">
         Trình duyệt của bạn không hỗ trợ thẻ âm thanh.
@@ -339,10 +295,10 @@
         🎵 <span id="musicStatus">Bật nhạc</span>
     </button>
 
+    <!-- Dòng chữ ngày tháng ở phía trên -->
     <div class="top-date-banner">14/8 ~ 14/10</div>
 
     <canvas id="bgCanvas"></canvas>
-    <div id="bubbleContainer"></div>
 
     <div class="envelope-container" id="envelopeBtn" onclick="openLetter()">
         <div class="envelope">
@@ -350,11 +306,13 @@
         </div>
     </div>
 
+    <!-- Bức thư chính -->
     <div class="letter-modal" id="letterModal" onclick="handleMinimizedLetterClick(event)">
         <div class="letter-title">Gửi Quỳnh Anh ❤️</div>
         <div class="letter-content" id="letterText"></div>
     </div>
 
+    <!-- Khung 3 dòng chữ cuối -->
     <div class="ending-text-box" id="endingTextBox" onclick="handleEndingClick(event)">
         <span id="endingTextSpan"></span>
     </div>
@@ -368,9 +326,10 @@ Anh biết sau hôm đó dù mình đã quay lại nhưng sự tự nhiên của
 
 Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được, nhưng điều duy nhất anh muốn nói với em là kể từ thời điểm mình yêu nhau, em luôn là điều rất quan trọng với anh, chưa một giây nào anh để những thứ khác làm mình phải lăn tăn, đắn đo với em cả, anh luôn muốn có một tình yêu All in với em. Kể cả những điều anh từng nói đến chuyện lâu dài của 2 đứa cũng là điều thật lòng anh nói, vì anh thật sự nghiêm túc với mối quan hệ này, với em. Anh biết những gì em chứng kiến dù thực hay chỉ là hiểu lầm thì em cũng cần thời gian thích nghi. Buồn thật nhỉ, nhưng lần này anh sẽ không mất bình tĩnh nữa, vì anh tin đến một thời điểm nào đó mình sẽ lại được tự nhiên như xưa và còn tốt hơn thế nữa.`;
 
-        const endingRawHtml = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.<br><br>Anh ❤️ Quỳnh Anh của anh nhiều lắm!<br><br><div class="highlight-line">Nam Yêu Quỳnh Anh.</div>`;
-        const endingPlainText = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.\n\nAnh ❤️ Quỳnh Anh của anh nhiều lắm!\n\nNam Yêu Quỳnh Anh.`;
+        const endingRawHtml = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.<br><br>Anh ❤️ Quỳnh Anh của anh nhiều lắm!<br><br><div class="highlight-line">Nam ❤️ Quỳnh Anh.</div>`;
+        const endingPlainText = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.\n\nAnh ❤️ Quỳnh Anh của anh nhiều lắm!\n\nNam ❤️ Quỳnh Anh.`;
 
+        // --- 1. ĐIỀU KHIỂN NHẠC LOVE2.MP3 ---
         const bgMusic = document.getElementById('bgMusic');
         const musicStatus = document.getElementById('musicStatus');
         let isMusicPlaying = false;
@@ -390,9 +349,10 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
             }
         }
 
-        // 1. TỐI ƯU CANVAS: Chỉ dùng vẽ dải lụa nền cực nhẹ
+
+        // --- 2. HIỆU ỨNG CANVAS (TỐI ƯU BAY MƯỢT TUYỆT ĐỐI KHÔNG LAG) ---
         const canvas = document.getElementById('bgCanvas');
-        const ctx = canvas.getContext('2d', { alpha: true });
+        const ctx = canvas.getContext('2d');
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -402,37 +362,78 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
         resizeCanvas();
 
         const silkStreams = [];
-        const streamCount = 5; // Rất nhẹ cho CPU
+        const streamCount = 14; 
         
         for (let i = 0; i < streamCount; i++) {
             silkStreams.push({
                 startX: -100,
                 startY: (canvas.height / streamCount) * i + (Math.random() * 80 - 40),
-                amplitude: Math.random() * 60 + 20,
-                frequency: Math.random() * 0.0005 + 0.0002,
-                speed: Math.random() * 0.2 + 0.08,
+                amplitude: Math.random() * 120 + 40,
+                frequency: Math.random() * 0.0009 + 0.0004,
+                speed: Math.random() * 0.35 + 0.1,
                 offset: Math.random() * 2000,
-                thickness: Math.random() * 20 + 3,
-                maxAlpha: Math.random() * 0.08 + 0.02,
-                angleTilt: (Math.random() - 0.5) * 0.15
+                thickness: Math.random() * 35 + 4,
+                maxAlpha: Math.random() * 0.14 + 0.02,
+                angleTilt: (Math.random() - 0.5) * 0.35,
+                pulseSpeed: Math.random() * 0.02 + 0.008,
+                pulseOffset: Math.random() * Math.PI * 2
             });
         }
 
-        function animateSilk() {
+        const loadedImages = [];
+        const maxPhotos = 40;
+        for (let i = 1; i <= maxPhotos; i++) {
+            const img = new Image();
+            img.src = `anh (${i}).jpg`;
+            loadedImages.push(img);
+        }
+
+        const heartSymbols = ["❤️", "💖", "💗", "💓", "💞", "💕", "💘", "💌", "✨"];
+
+        const bubbles = [];
+        const bubbleCount = 39; 
+        
+        for (let i = 0; i < bubbleCount; i++) {
+            let isHeart = (i % 3 === 0); 
+
+            bubbles.push({
+                isHeart: isHeart,
+                x: -120 - Math.random() * 400,
+                y: Math.random() * canvas.height,
+                radius: isHeart ? (Math.random() * 16 + 18) : (Math.random() * 28 + 32),
+                speedX: Math.random() * 1.2 + 1.2, // Tốc độ bay ngang ổn định, mượt mà
+                speedY: (Math.random() - 0.5) * 0.6, // Dịch chuyển dọc nhẹ nhàng, không khựng giật
+                imgIndex: Math.floor(Math.random() * maxPhotos),
+                heartText: heartSymbols[Math.floor(Math.random() * heartSymbols.length)],
+                fontSize: Math.random() * 20 + 26,
+                active: false,
+                delay: i * 12
+            });
+        }
+
+        let hasOpenedFirstTime = false;
+        let frameCounter = 0;
+
+        function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             silkStreams.forEach(stream => {
                 stream.offset += stream.speed;
+                stream.pulseOffset += stream.pulseSpeed;
+
+                let currentAlpha = stream.maxAlpha * (0.6 + 0.4 * Math.sin(stream.pulseOffset));
+
                 ctx.save();
                 ctx.beginPath();
 
-                let stepSize = 60; // Tối ưu bước nhảy để giảm tải tối đa
+                let stepSize = 25;
                 let totalLength = canvas.width + 200;
 
                 for (let x = -100; x <= totalLength; x += stepSize) {
                     let y = stream.startY + 
                             (x * stream.angleTilt) +
-                            Math.sin((x + stream.offset) * stream.frequency) * stream.amplitude;
+                            Math.sin((x + stream.offset) * stream.frequency) * stream.amplitude +
+                            Math.cos((x - stream.offset) * 0.0006) * (stream.amplitude * 0.5);
                     
                     if (x === -100) ctx.moveTo(x, y);
                     else ctx.lineTo(x, y);
@@ -440,85 +441,139 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
 
                 let grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
                 grad.addColorStop(0, 'rgba(255, 105, 180, 0)');
-                grad.addColorStop(0.5, `rgba(255, 192, 203, ${stream.maxAlpha})`);
+                grad.addColorStop(0.25, `rgba(255, 140, 185, ${currentAlpha})`);
+                grad.addColorStop(0.5, `rgba(255, 192, 203, ${currentAlpha * 1.4})`);
+                grad.addColorStop(0.75, `rgba(255, 140, 185, ${currentAlpha})`);
                 grad.addColorStop(1, 'rgba(255, 105, 180, 0)');
 
                 ctx.strokeStyle = grad;
                 ctx.lineWidth = stream.thickness;
                 ctx.lineCap = 'round';
+                ctx.shadowBlur = 30;
+                ctx.shadowColor = 'rgba(255, 105, 180, 0.4)';
                 ctx.stroke();
                 ctx.restore();
             });
 
-            requestAnimationFrame(animateSilk);
-        }
-        animateSilk();
-
-        // 2. HỆ THỐNG BONG BÓNG BẰNG CSS ANIMATION (GPU ACCELERATED - HOÀN TOÀN KHÔNG GIẬT LAG)
-        const bubbleContainer = document.getElementById('bubbleContainer');
-        const heartSymbols = ["❤️", "💖", "💗", "💓", "💞", "💕", "💘", "💌", "✨"];
-        const maxPhotos = 40;
-        const totalBubbles = 18; // Số lượng vừa đủ đẹp và mượt mà tuyệt đối
-
-        function createBubbles() {
-            for (let i = 0; i < totalBubbles; i++) {
-                const bubble = document.createElement('div');
-                bubble.classList.add('floating-bubble');
-
-                let isHeart = (i % 3 === 0);
-                let size = isHeart ? (Math.random() * 15 + 22) : (Math.random() * 25 + 40); // Kích thước bán kính * 2
-
-                if (isHeart) {
-                    bubble.classList.add('heart-bubble');
-                    bubble.innerText = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
-                } else {
-                    bubble.classList.add('photo-bubble');
-                    bubble.style.width = `${size}px`;
-                    bubble.style.height = `${size}px`;
-
-                    let imgIndex = Math.floor(Math.random() * maxPhotos) + 1;
-                    const img = document.createElement('img');
-                    img.src = `anh (${imgIndex}).jpg`;
-                    img.loading = "lazy";
-                    bubble.appendChild(img);
-                }
-
-                // Gán vị trí ngẫu nhiên và thời gian bay mượt mà
-                let startYPos = Math.random() * window.innerHeight;
-                let endYPos = startYPos + (Math.random() * 200 - 100);
-                let duration = Math.random() * 10 + 12; // 12 đến 22 giây bay hết màn hình
-                let delay = i * 1.2;
-
-                bubble.style.setProperty('--startY', `${startYPos}px`);
-                bubble.style.setProperty('--endY', `${endYPos}px`);
-                bubble.style.animation = `floatUpRight ${duration}s linear ${delay}s infinite`;
-
-                bubbleContainer.appendChild(bubble);
+            if (hasOpenedFirstTime) {
+                frameCounter++;
+                bubbles.forEach(b => {
+                    if (!b.active && frameCounter >= b.delay) {
+                        b.active = true;
+                    }
+                });
             }
-        }
 
-        // 3. HIỆU ỨNG GÕ CHỮ TỐI ƯU TỐC ĐỘ CAO
+            bubbles.forEach(b => {
+                if (b.active) {
+                    b.x += b.speedX;
+                    b.y += b.speedY; 
+
+                    // Khi bay ra khỏi mép phải màn hình, tái tạo lại mượt mà ở mép trái
+                    if (b.x > canvas.width + b.radius * 2) {
+                        b.x = -100;
+                        b.y = Math.random() * canvas.height;
+                        b.speedX = Math.random() * 1.2 + 1.2;
+                        b.speedY = (Math.random() - 0.5) * 0.6;
+                        b.imgIndex = Math.floor(Math.random() * maxPhotos);
+                        b.heartText = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                    }
+
+                    ctx.save();
+
+                    if (b.isHeart) {
+                        ctx.font = `${b.fontSize}px sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.shadowBlur = 12;
+                        ctx.shadowColor = 'rgba(255, 105, 180, 0.8)';
+                        ctx.fillText(b.heartText, b.x, b.y);
+                    } else {
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                        ctx.closePath();
+                        ctx.clip();
+
+                        const img = loadedImages[b.imgIndex];
+                        if (img && img.complete && img.naturalWidth !== 0) {
+                            let diameter = b.radius * 2;
+                            let imgRatio = img.naturalWidth / img.naturalHeight;
+                            let renderWidth, renderHeight, offsetX, offsetY;
+
+                            if (imgRatio > 1) {
+                                renderHeight = diameter;
+                                renderWidth = diameter * imgRatio;
+                                offsetX = b.x - (renderWidth - diameter) / 2 - b.radius;
+                                offsetY = b.y - b.radius;
+                            } else {
+                                renderWidth = diameter;
+                                renderHeight = diameter / imgRatio;
+                                offsetX = b.x - b.radius;
+                                offsetY = b.y - (renderHeight - diameter) / 2 - b.radius;
+                            }
+
+                            ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
+                        } else {
+                            ctx.fillStyle = '#ffb6c1';
+                            ctx.fill();
+                        }
+                        ctx.restore();
+
+                        const rainbowGlow = ctx.createRadialGradient(
+                            b.x - b.radius * 0.3, b.y - b.radius * 0.3, b.radius * 0.1,
+                            b.x, b.y, b.radius
+                        );
+                        rainbowGlow.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
+                        rainbowGlow.addColorStop(0.3, 'rgba(255, 182, 193, 0.25)');
+                        rainbowGlow.addColorStop(0.5, 'rgba(255, 255, 150, 0.25)');
+                        rainbowGlow.addColorStop(0.7, 'rgba(150, 222, 255, 0.25)');
+                        rainbowGlow.addColorStop(0.9, 'rgba(221, 160, 221, 0.3)');
+                        rainbowGlow.addColorStop(1, 'rgba(255, 255, 255, 0.6)');
+
+                        ctx.beginPath();
+                        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = rainbowGlow;
+                        ctx.fill();
+
+                        ctx.beginPath();
+                        ctx.arc(b.x - b.radius * 0.35, b.y - b.radius * 0.35, b.radius * 0.2, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+                        ctx.fill();
+
+                        ctx.beginPath();
+                        ctx.arc(b.x - b.radius * 0.5, b.y - b.radius * 0.15, b.radius * 0.08, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                        ctx.fill();
+                    }
+
+                    ctx.restore();
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+
+        // --- 3. ĐIỀU KHIỂN HIỆU ỨNG GÕ CHỮ VÀ CHUYỂN ĐỔI 3D ---
         let isFirstOpen = true;
 
         function startTypingEffect() {
             const textContainer = document.getElementById('letterText');
             textContainer.innerHTML = "";
             let index = 0;
-            let chunkSize = 4; // Tăng lượng ký tự mỗi nhịp để siêu mượt và nhanh
 
             function type() {
                 if (index < fullText.length) {
-                    let chunk = fullText.substr(index, chunkSize);
-                    textContainer.innerHTML += chunk;
-                    index += chunkSize;
-                    
+                    textContainer.innerHTML += fullText.charAt(index);
+                    index++;
                     textContainer.scrollTop = textContainer.scrollHeight;
-                    setTimeout(type, 12);
+                    setTimeout(type, 25);
                 } else {
-                    textContainer.scrollTop = textContainer.scrollHeight;
                     setTimeout(() => {
                         showEndingTextCenter();
-                    }, 400);
+                    }, 600);
                 }
             }
             type();
@@ -530,6 +585,7 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
             const endingSpan = document.getElementById('endingTextSpan');
 
             modal.classList.add('minimized');
+
             endingBox.classList.add('show');
             endingBox.classList.remove('compact');
             endingSpan.innerHTML = "";
@@ -544,7 +600,7 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
                         endingSpan.innerHTML += char;
                     }
                     index++;
-                    setTimeout(typeEnding, 15);
+                    setTimeout(typeEnding, 30);
                 } else {
                     endingSpan.innerHTML = endingRawHtml;
                 }
@@ -557,6 +613,7 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
             if (!endingBox.classList.contains('compact')) return; 
 
             const modal = document.getElementById('letterModal');
+
             endingBox.classList.remove('compact');
             endingBox.classList.add('show');
             modal.classList.remove('show');
@@ -568,6 +625,7 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
             if (!modal.classList.contains('minimized')) return; 
 
             const endingBox = document.getElementById('endingTextBox');
+
             modal.classList.remove('minimized');
             modal.classList.add('show');
             endingBox.classList.remove('show');
@@ -583,8 +641,8 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
                 modal.classList.add('show');
                 
                 if (isFirstOpen) {
-                    createBubbles(); // Khởi tạo bong bóng bay mượt bằng GPU sau khi mở thư
                     startTypingEffect();
+                    hasOpenedFirstTime = true; 
                     isFirstOpen = false;
                 }
             }, 300);
