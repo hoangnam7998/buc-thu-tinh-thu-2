@@ -23,6 +23,7 @@
             perspective: 1200px;
         }
 
+        /* Canvas chỉ dùng cho dải lụa nền để nhẹ CPU nhất */
         #bgCanvas {
             position: fixed;
             top: 0;
@@ -31,6 +32,57 @@
             height: 100%;
             pointer-events: none;
             z-index: 1;
+        }
+
+        /* Lớp chứa các bong bóng ảnh/trái tim tối ưu hóa bằng CSS GPU (Không giật lag) */
+        #bubbleContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .floating-bubble {
+            position: absolute;
+            will-change: transform;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+        }
+
+        /* Bong bóng ảnh */
+        .photo-bubble {
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5), 0 4px 15px rgba(255, 105, 180, 0.3);
+            background: #ffb6c1;
+        }
+
+        .photo-bubble img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Bong bóng trái tim / ký tự */
+        .heart-bubble {
+            font-size: 28px;
+            text-shadow: 0 0 10px rgba(255, 105, 180, 0.8);
+        }
+
+        @keyframes floatUpRight {
+            0% {
+                transform: translate3d(-150px, var(--startY), 0);
+            }
+            100% {
+                transform: translate3d(calc(100vw + 150px), var(--endY), 0);
+            }
         }
 
         .music-control {
@@ -290,6 +342,7 @@
     <div class="top-date-banner">14/8 ~ 14/10</div>
 
     <canvas id="bgCanvas"></canvas>
+    <div id="bubbleContainer"></div>
 
     <div class="envelope-container" id="envelopeBtn" onclick="openLetter()">
         <div class="envelope">
@@ -315,8 +368,8 @@ Anh biết sau hôm đó dù mình đã quay lại nhưng sự tự nhiên của
 
 Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được, nhưng điều duy nhất anh muốn nói với em là kể từ thời điểm mình yêu nhau, em luôn là điều rất quan trọng với anh, chưa một giây nào anh để những thứ khác làm mình phải lăn tăn, đắn đo với em cả, anh luôn muốn có một tình yêu All in với em. Kể cả những điều anh từng nói đến chuyện lâu dài của 2 đứa cũng là điều thật lòng anh nói, vì anh thật sự nghiêm túc với mối quan hệ này, với em. Anh biết những gì em chứng kiến dù thực hay chỉ là hiểu lầm thì em cũng cần thời gian thích nghi. Buồn thật nhỉ, nhưng lần này anh sẽ không mất bình tĩnh nữa, vì anh tin đến một thời điểm nào đó mình sẽ lại được tự nhiên như xưa và còn tốt hơn thế nữa.`;
 
-        const endingRawHtml = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.<br><br>Anh ❤️️ Quỳnh Anh của anh nhiều lắm!<br><br><div class="highlight-line">Nam ❤️️ Quỳnh Anh.</div>`;
-        const endingPlainText = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.\n\nAnh ❤️ Quỳnh Anh của anh nhiều lắm!\n\nNam ❤️️ Quỳnh Anh.`;
+        const endingRawHtml = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.<br><br>Anh ❤️ Quỳnh Anh của anh nhiều lắm!<br><br><div class="highlight-line">Nam Yêu Quỳnh Anh.</div>`;
+        const endingPlainText = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.\n\nAnh ❤️ Quỳnh Anh của anh nhiều lắm!\n\nNam Yêu Quỳnh Anh.`;
 
         const bgMusic = document.getElementById('bgMusic');
         const musicStatus = document.getElementById('musicStatus');
@@ -337,6 +390,7 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
             }
         }
 
+        // 1. TỐI ƯU CANVAS: Chỉ dùng vẽ dải lụa nền cực nhẹ
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d', { alpha: true });
 
@@ -348,70 +402,31 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
         resizeCanvas();
 
         const silkStreams = [];
-        const streamCount = 8; // Giảm số lượng dải lụa để tăng tốc độ khung hình
+        const streamCount = 5; // Rất nhẹ cho CPU
         
         for (let i = 0; i < streamCount; i++) {
             silkStreams.push({
                 startX: -100,
                 startY: (canvas.height / streamCount) * i + (Math.random() * 80 - 40),
-                amplitude: Math.random() * 80 + 30,
-                frequency: Math.random() * 0.0007 + 0.0003,
-                speed: Math.random() * 0.25 + 0.1,
+                amplitude: Math.random() * 60 + 20,
+                frequency: Math.random() * 0.0005 + 0.0002,
+                speed: Math.random() * 0.2 + 0.08,
                 offset: Math.random() * 2000,
-                thickness: Math.random() * 25 + 4,
-                maxAlpha: Math.random() * 0.1 + 0.02,
-                angleTilt: (Math.random() - 0.5) * 0.2,
-                pulseSpeed: Math.random() * 0.015 + 0.005,
-                pulseOffset: Math.random() * Math.PI * 2
+                thickness: Math.random() * 20 + 3,
+                maxAlpha: Math.random() * 0.08 + 0.02,
+                angleTilt: (Math.random() - 0.5) * 0.15
             });
         }
 
-        const loadedImages = [];
-        const maxPhotos = 40;
-        for (let i = 1; i <= maxPhotos; i++) {
-            const img = new Image();
-            img.src = `anh (${i}).jpg`;
-            loadedImages.push(img);
-        }
-
-        const heartSymbols = ["❤️", "💖", "💗", "💓", "💞", "💕", "💘", "💌", "✨"];
-
-        const bubbles = [];
-        const bubbleCount = 20; // Giới hạn số lượng bong bóng để loại bỏ hoàn toàn hiện tượng giật hình
-        
-        for (let i = 0; i < bubbleCount; i++) {
-            let isHeart = (i % 3 === 0); 
-            bubbles.push({
-                isHeart: isHeart,
-                x: -120 - Math.random() * 600,
-                y: Math.random() * canvas.height,
-                radius: isHeart ? (Math.random() * 14 + 16) : (Math.random() * 24 + 28),
-                speedX: Math.random() * 1.0 + 1.0,
-                speedY: (Math.random() - 0.5) * 0.4,
-                imgIndex: Math.floor(Math.random() * maxPhotos),
-                heartText: heartSymbols[Math.floor(Math.random() * heartSymbols.length)],
-                fontSize: Math.random() * 18 + 22,
-                active: false,
-                delay: i * 15
-            });
-        }
-
-        let hasOpenedFirstTime = false;
-        let frameCounter = 0;
-
-        function animate() {
+        function animateSilk() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             silkStreams.forEach(stream => {
                 stream.offset += stream.speed;
-                stream.pulseOffset += stream.pulseSpeed;
-
-                let currentAlpha = stream.maxAlpha * (0.6 + 0.4 * Math.sin(stream.pulseOffset));
-
                 ctx.save();
                 ctx.beginPath();
 
-                let stepSize = 40; // Tăng bước nhảy để tối ưu hiệu năng vẽ
+                let stepSize = 60; // Tối ưu bước nhảy để giảm tải tối đa
                 let totalLength = canvas.width + 200;
 
                 for (let x = -100; x <= totalLength; x += stepSize) {
@@ -425,7 +440,7 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
 
                 let grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
                 grad.addColorStop(0, 'rgba(255, 105, 180, 0)');
-                grad.addColorStop(0.5, `rgba(255, 192, 203, ${currentAlpha * 1.2})`);
+                grad.addColorStop(0.5, `rgba(255, 192, 203, ${stream.maxAlpha})`);
                 grad.addColorStop(1, 'rgba(255, 105, 180, 0)');
 
                 ctx.strokeStyle = grad;
@@ -435,99 +450,75 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
                 ctx.restore();
             });
 
-            if (hasOpenedFirstTime) {
-                frameCounter++;
-                bubbles.forEach(b => {
-                    if (!b.active && frameCounter >= b.delay) {
-                        b.active = true;
-                    }
-                });
-            }
-
-            bubbles.forEach(b => {
-                if (b.active) {
-                    b.x += b.speedX;
-                    b.y += b.speedY; 
-
-                    if (b.x > canvas.width + b.radius * 2) {
-                        b.x = -100;
-                        b.y = Math.random() * canvas.height;
-                        b.speedX = Math.random() * 1.0 + 1.0;
-                        b.speedY = (Math.random() - 0.5) * 0.4;
-                        b.imgIndex = Math.floor(Math.random() * maxPhotos);
-                        b.heartText = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
-                    }
-
-                    ctx.save();
-
-                    if (b.isHeart) {
-                        ctx.font = `${b.fontSize}px sans-serif`;
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText(b.heartText, b.x, b.y);
-                    } else {
-                        ctx.save();
-                        ctx.beginPath();
-                        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-                        ctx.closePath();
-                        ctx.clip();
-
-                        const img = loadedImages[b.imgIndex];
-                        if (img && img.complete && img.naturalWidth !== 0) {
-                            let diameter = b.radius * 2;
-                            ctx.drawImage(img, b.x - b.radius, b.y - b.radius, diameter, diameter);
-                        } else {
-                            ctx.fillStyle = '#ffb6c1';
-                            ctx.fill();
-                        }
-                        ctx.restore();
-
-                        // Viền bong bóng đơn giản, không dùng shadowBlur nặng nề để đảm bảo mượt mà
-                        ctx.beginPath();
-                        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-                        ctx.lineWidth = 1.5;
-                        ctx.stroke();
-
-                        // Điểm sáng phản chiếu trên bong bóng
-                        ctx.beginPath();
-                        ctx.arc(b.x - b.radius * 0.35, b.y - b.radius * 0.35, b.radius * 0.2, 0, Math.PI * 2);
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-                        ctx.fill();
-                    }
-
-                    ctx.restore();
-                }
-            });
-
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animateSilk);
         }
-        animate();
+        animateSilk();
 
+        // 2. HỆ THỐNG BONG BÓNG BẰNG CSS ANIMATION (GPU ACCELERATED - HOÀN TOÀN KHÔNG GIẬT LAG)
+        const bubbleContainer = document.getElementById('bubbleContainer');
+        const heartSymbols = ["❤️", "💖", "💗", "💓", "💞", "💕", "💘", "💌", "✨"];
+        const maxPhotos = 40;
+        const totalBubbles = 18; // Số lượng vừa đủ đẹp và mượt mà tuyệt đối
+
+        function createBubbles() {
+            for (let i = 0; i < totalBubbles; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('floating-bubble');
+
+                let isHeart = (i % 3 === 0);
+                let size = isHeart ? (Math.random() * 15 + 22) : (Math.random() * 25 + 40); // Kích thước bán kính * 2
+
+                if (isHeart) {
+                    bubble.classList.add('heart-bubble');
+                    bubble.innerText = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                } else {
+                    bubble.classList.add('photo-bubble');
+                    bubble.style.width = `${size}px`;
+                    bubble.style.height = `${size}px`;
+
+                    let imgIndex = Math.floor(Math.random() * maxPhotos) + 1;
+                    const img = document.createElement('img');
+                    img.src = `anh (${imgIndex}).jpg`;
+                    img.loading = "lazy";
+                    bubble.appendChild(img);
+                }
+
+                // Gán vị trí ngẫu nhiên và thời gian bay mượt mà
+                let startYPos = Math.random() * window.innerHeight;
+                let endYPos = startYPos + (Math.random() * 200 - 100);
+                let duration = Math.random() * 10 + 12; // 12 đến 22 giây bay hết màn hình
+                let delay = i * 1.2;
+
+                bubble.style.setProperty('--startY', `${startYPos}px`);
+                bubble.style.setProperty('--endY', `${endYPos}px`);
+                bubble.style.animation = `floatUpRight ${duration}s linear ${delay}s infinite`;
+
+                bubbleContainer.appendChild(bubble);
+            }
+        }
+
+        // 3. HIỆU ỨNG GÕ CHỮ TỐI ƯU TỐC ĐỘ CAO
         let isFirstOpen = true;
 
         function startTypingEffect() {
             const textContainer = document.getElementById('letterText');
             textContainer.innerHTML = "";
             let index = 0;
-            let batchSize = 3; // Gõ từng cụm từ nhỏ để tăng tốc độ hiển thị và giảm tải DOM
+            let chunkSize = 4; // Tăng lượng ký tự mỗi nhịp để siêu mượt và nhanh
 
             function type() {
                 if (index < fullText.length) {
-                    let chunk = fullText.substr(index, batchSize);
+                    let chunk = fullText.substr(index, chunkSize);
                     textContainer.innerHTML += chunk;
-                    index += batchSize;
+                    index += chunkSize;
                     
-                    // Chỉ cuộn khung khi cần thiết để tránh ép layout liên tục
-                    if (index % 30 === 0) {
-                        textContainer.scrollTop = textContainer.scrollHeight;
-                    }
-                    setTimeout(type, 15);
+                    textContainer.scrollTop = textContainer.scrollHeight;
+                    setTimeout(type, 12);
                 } else {
                     textContainer.scrollTop = textContainer.scrollHeight;
                     setTimeout(() => {
                         showEndingTextCenter();
-                    }, 500);
+                    }, 400);
                 }
             }
             type();
@@ -553,7 +544,7 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
                         endingSpan.innerHTML += char;
                     }
                     index++;
-                    setTimeout(typeEnding, 20);
+                    setTimeout(typeEnding, 15);
                 } else {
                     endingSpan.innerHTML = endingRawHtml;
                 }
@@ -592,8 +583,8 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
                 modal.classList.add('show');
                 
                 if (isFirstOpen) {
+                    createBubbles(); // Khởi tạo bong bóng bay mượt bằng GPU sau khi mở thư
                     startTypingEffect();
-                    hasOpenedFirstTime = true; 
                     isFirstOpen = false;
                 }
             }, 300);
