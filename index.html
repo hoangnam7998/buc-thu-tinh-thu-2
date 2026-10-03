@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bức Thư Tình Gửi Quỳnh Anh</title>
+    <!-- Nhúng font chữ viết tay nghệ thuật từ Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -23,7 +25,6 @@
             perspective: 1200px;
         }
 
-        /* Canvas hiệu ứng gió & bong bóng */
         #bgCanvas {
             position: fixed;
             top: 0;
@@ -34,258 +35,200 @@
             z-index: 1;
         }
 
-        /* Nút điều khiển nhạc riêng */
-        .music-control {
+        #bubbleContainer {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #fff;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .music-control:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.05);
-        }
-
-        /* --- DÒNG CHỮ 14/8 ~ 14/10 Ở PHÍA TRÊN BỨC THƯ --- */
-        @keyframes dateGlowPulse {
-            0% {
-                text-shadow: 0 0 10px rgba(255, 105, 180, 0.5), 0 0 20px rgba(255, 20, 147, 0.3), 0 0 35px rgba(255, 192, 203, 0.2);
-            }
-            50% {
-                text-shadow: 0 0 25px rgba(255, 105, 180, 1), 0 0 50px rgba(255, 20, 147, 0.7), 0 0 75px rgba(255, 182, 193, 0.5);
-            }
-            100% {
-                text-shadow: 0 0 10px rgba(255, 105, 180, 0.5), 0 0 20px rgba(255, 20, 147, 0.3), 0 0 35px rgba(255, 192, 203, 0.2);
-            }
-        }
-
-        .top-date-banner {
-            position: fixed;
-            top: 14%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 15;
-            color: #fff;
-            font-size: 44px;
-            font-weight: 600;
-            font-family: 'Georgia', serif;
-            letter-spacing: 4px;
-            text-align: center;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            animation: dateGlowPulse 3s infinite ease-in-out;
+            z-index: 2;
+            overflow: hidden;
         }
 
-        /* Phong bì thư ở giữa */
-        .envelope-container {
+        .floating-bubble {
+            position: absolute;
+            will-change: transform, opacity;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            opacity: 0;
+            box-sizing: content-box; 
+        }
+
+        /* --- BONG BÓNG ẢNH SIÊU TRONG SUỐT --- */
+        .photo-bubble {
+            width: 120px;
+            height: 120px;
+        }
+
+        .photo-bubble .bubble-shell {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(255, 255, 255, 0.45) 0%, 
+                rgba(255, 255, 255, 0.1) 40%, 
+                rgba(255, 182, 193, 0.02) 70%, 
+                rgba(138, 43, 226, 0.08) 100%
+            );
+            box-shadow: 
+                inset 0 0 10px rgba(255, 255, 255, 0.3),
+                0 0 8px rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter: blur(0.8px);
+            backdrop-filter: blur(0.8px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            z-index: 2;
+            pointer-events: none;
+            animation: bubbleWobble 4s infinite ease-in-out alternate;
+        }
+
+        .photo-bubble .bubble-shell::after {
+            content: '';
+            position: absolute;
+            top: 12%; left: 18%;
+            width: 25%; height: 25%;
+            background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            filter: blur(1px);
+        }
+
+        /* Hình trái tim độc lập, không có lớp vỏ bọc */
+        .heart-element {
+            font-size: 42px;
+            text-shadow: 0 0 18px rgba(255, 105, 180, 0.9), 0 0 30px rgba(255, 20, 147, 0.6);
+            color: #ff69b4;
+            z-index: 2;
+            animation: heartPulse 2s infinite ease-in-out alternate;
+        }
+
+        @keyframes heartPulse {
+            0% { transform: scale(0.95); }
+            100% { transform: scale(1.08); }
+        }
+
+        @keyframes bubbleWobble {
+            0% { transform: scale(0.98) translate(1px, -1px); }
+            33% { transform: scale(1.02) translate(-1px, 1px); }
+            66% { transform: scale(1.0) translate(1px, 1px); }
+            100% { transform: scale(0.99) translate(-1px, -1px); }
+        }
+
+        .bubble-content {
             position: relative;
-            z-index: 10;
-            cursor: pointer;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        .envelope-container:hover {
-            transform: scale(1.05);
-        }
-
-        .envelope {
-            width: 280px;
-            height: 180px;
-            background: #fff;
-            border-radius: 10px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+            z-index: 1;
+            border-radius: 50%;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .envelope::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            border-left: 140px solid transparent;
-            border-right: 140px solid transparent;
-            border-top: 100px solid #e0e0e0;
-            transform-origin: top;
-            transition: transform 0.6s ease;
-            z-index: 3;
+        .photo-bubble .bubble-content {
+            width: 120px;
+            height: 120px;
         }
 
-        .envelope-text {
-            position: relative;
-            z-index: 4;
-            font-size: 18px;
-            color: #333;
-            font-weight: 600;
-            letter-spacing: 1px;
-            margin-top: 40px;
-            pointer-events: none;
+        .photo-bubble img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
-        .envelope-container.open .envelope::before {
-            transform: rotateX(180deg);
-            z-index: 0;
-        }
-
-        .envelope-container.open {
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(0.8);
-            transition: all 0.5s ease;
-            position: absolute;
-        }
-
-        /* --- BỨC THƯ CHÍNH & 3 DÒNG CUỐI: CHUNG TỌA ĐỘ 3D --- */
-        .letter-modal, .ending-text-box {
+        /* Nút nhạc */
+        .music-control {
             position: fixed;
-            top: 55%;
-            left: 50%;
-            transform-style: preserve-3d;
-            transition: all 0.8s cubic-bezier(0.77, 0, 0.175, 1);
-            will-change: transform, opacity;
+            top: 20px; right: 20px; z-index: 100;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff; padding: 8px 15px; border-radius: 20px;
+            cursor: pointer; font-size: 13px;
+            display: flex; align-items: center; gap: 6px;
+            transition: all 0.3s ease;
+        }
+        .music-control:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
+
+        /* --- BANNER NGÀY THÁNG --- */
+        @keyframes dateGlowPulse { 
+            0%, 100% { text-shadow: 0 0 10px rgba(255, 105, 180, 0.6), 0 0 20px rgba(255, 105, 180, 0.4); } 
+            50% { text-shadow: 0 0 20px rgba(255, 20, 147, 1), 0 0 35px rgba(255, 105, 180, 0.8); } 
+        }
+        .top-date-banner {
+            position: fixed; top: 12%; left: 50%; transform: translateX(-50%); z-index: 15;
+            color: #fff; font-size: 56px; font-family: 'Great Vibes', cursive;
+            letter-spacing: 3px; text-align: center; pointer-events: none;
+            animation: dateGlowPulse 3s infinite ease-in-out;
         }
 
-        /* 1. Bức thư chính */
-        .letter-modal {
-            width: 90%;
-            max-width: 550px;
-            background: #fff;
-            padding: 35px 30px;
-            border-radius: 15px;
-            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
-            z-index: 20;
+        /* Phong bì */
+        .envelope-container { position: relative; z-index: 10; cursor: pointer; text-align: center; transition: transform 0.3s ease; }
+        .envelope-container:hover { transform: scale(1.05); }
+        .envelope { width: 280px; height: 180px; background: #fff; border-radius: 10px; position: relative; box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2); display: flex; justify-content: center; align-items: center; }
+        .envelope::before { content: ''; position: absolute; top: 0; left: 0; border-left: 140px solid transparent; border-right: 140px solid transparent; border-top: 100px solid #e0e0e0; transform-origin: top; transition: transform 0.6s ease; z-index: 3; }
+        .envelope-text { position: relative; z-index: 4; font-size: 18px; color: #333; font-weight: 600; letter-spacing: 1px; margin-top: 40px; pointer-events: none; }
+        .envelope-container.open .envelope::before { transform: rotateX(180deg); z-index: 0; }
+        .envelope-container.open { opacity: 0; pointer-events: none; transform: scale(0.8); transition: all 0.5s ease; position: absolute; }
+
+        /* Hộp thư */
+        .letter-modal, .ending-text-box { position: fixed; top: 55%; left: 50%; transform-style: preserve-3d; transition: all 0.8s cubic-bezier(0.77, 0, 0.175, 1); will-change: transform, opacity; }
+        .letter-modal { width: 90%; max-width: 550px; background: #fff; padding: 35px 30px; border-radius: 15px; box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3); z-index: 20; opacity: 0; pointer-events: none; text-align: center; transform: translate(-50%, -50%) scale(0.5) rotateY(-90deg); }
+        .letter-modal.show { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1) rotateY(0deg); }
+        .letter-modal.minimized { transform: translate(-140%, -50%) scale(0.42); opacity: 0.85; pointer-events: auto; cursor: pointer; box-shadow: 0 5px 25px rgba(255, 105, 180, 0.6); }
+        .letter-title { font-size: 22px; color: #d63384; margin-bottom: 15px; font-family: serif; font-weight: bold; }
+        .letter-content { font-size: 15px; color: #444; line-height: 1.7; text-align: left; max-height: 340px; overflow-y: auto; padding-right: 10px; white-space: pre-wrap; word-break: break-word; }
+        .letter-content::-webkit-scrollbar { width: 6px; }
+        .letter-content::-webkit-scrollbar-thumb { background-color: #f0a5c0; border-radius: 3px; }
+
+        /* --- PHẦN KẾT (3 DÒNG CUỐI) --- */
+        @keyframes textGlowPulse { 
+            0%, 100% { text-shadow: 0 0 10px rgba(255, 105, 180, 0.5), 0 0 20px rgba(255, 105, 180, 0.3); } 
+            50% { text-shadow: 0 0 20px rgba(255, 20, 147, 1), 0 0 35px rgba(255, 105, 180, 0.8); } 
+        }
+        .ending-text-box { 
+            z-index: 25; width: 90%; max-width: 650px; color: #fff; 
+            font-size: 38px; 
+            font-family: 'Great Vibes', cursive;
+            line-height: 1.6; text-align: center; opacity: 0; pointer-events: none; 
+            transform: translate(-50%, -50%) scale(0.5) rotateY(90deg); 
+            animation: textGlowPulse 3s infinite ease-in-out; 
+        }
+        .ending-text-box.show { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1) rotateY(0deg); }
+        .ending-text-box.compact { transform: translate(-140%, -50%) scale(0.42); opacity: 0.85; pointer-events: auto; cursor: pointer; text-align: left; }
+        .ending-text-box.compact:hover { opacity: 1; }
+
+        .fade-line {
             opacity: 0;
-            pointer-events: none;
-            text-align: center;
-            transform: translate(-50%, -50%) scale(0.5) rotateY(-90deg);
+            transform: translateY(25px);
+            transition: opacity 1.2s ease, transform 1.2s ease;
         }
-
-        .letter-modal.show {
+        .fade-line.visible {
             opacity: 1;
-            pointer-events: auto;
-            transform: translate(-50%, -50%) scale(1) rotateY(0deg);
+            transform: translateY(0);
         }
 
-        .letter-modal.minimized {
-            transform: translate(-140%, -50%) scale(0.42);
-            opacity: 0.85;
-            pointer-events: auto;
-            cursor: pointer;
-            box-shadow: 0 5px 25px rgba(255, 105, 180, 0.6);
-        }
-        .letter-modal.minimized:hover {
-            opacity: 1;
-            box-shadow: 0 0 30px rgba(255, 105, 180, 1);
-        }
-
-        .letter-title {
-            font-size: 22px;
-            color: #d63384;
-            margin-bottom: 15px;
-            font-family: serif;
-            font-weight: bold;
-        }
-
-        .letter-content {
-            font-size: 15px;
-            color: #444;
-            line-height: 1.7;
-            text-align: left;
-            max-height: 340px;
-            overflow-y: auto;
-            padding-right: 10px;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .letter-content::-webkit-scrollbar {
-            width: 6px;
-        }
-        .letter-content::-webkit-scrollbar-thumb {
-            background-color: #f0a5c0;
-            border-radius: 3px;
-        }
-
-        /* 2. Khung chứa 3 dòng chữ cuối */
-        @keyframes textGlowPulse {
-            0% {
-                text-shadow: 0 0 10px rgba(255, 105, 180, 0.4), 0 0 20px rgba(255, 20, 147, 0.2), 0 0 30px rgba(255, 192, 203, 0.1);
-            }
-            50% {
-                text-shadow: 0 0 22px rgba(255, 105, 180, 0.9), 0 0 45px rgba(255, 20, 147, 0.6), 0 0 65px rgba(255, 182, 193, 0.4);
-            }
-            100% {
-                text-shadow: 0 0 10px rgba(255, 105, 180, 0.4), 0 0 20px rgba(255, 20, 147, 0.2), 0 0 30px rgba(255, 192, 203, 0.1);
-            }
-        }
-
-        .ending-text-box {
-            z-index: 25;
-            width: 90%;
-            max-width: 560px;
-            color: #fff;
-            font-size: 25px;
-            line-height: 1.7;
-            text-align: center;
-            opacity: 0;
-            pointer-events: none;
-            transform: translate(-50%, -50%) scale(0.5) rotateY(90deg);
-            animation: textGlowPulse 3s infinite ease-in-out;
-        }
-
-        .ending-text-box.show {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translate(-50%, -50%) scale(1) rotateY(0deg);
-        }
-
-        .ending-text-box.compact {
-            transform: translate(-140%, -50%) scale(0.42);
-            opacity: 0.85;
-            pointer-events: auto;
-            cursor: pointer;
-            text-align: left;
-        }
-        .ending-text-box.compact:hover {
-            opacity: 1;
-        }
-
-        .ending-text-box .highlight-line {
-            color: #ffb6c1;
-            font-weight: bold;
-            font-size: 28px;
-            margin-top: 15px;
+        .ending-text-box .highlight-line { 
+            color: #ffb6c1; font-weight: bold; font-size: 44px; margin-top: 15px; 
+            text-shadow: 0 0 15px rgba(255, 105, 180, 0.9), 0 0 30px rgba(255, 20, 147, 0.8);
         }
 
         @media (max-width: 768px) {
-            .letter-modal.minimized, .ending-text-box.compact {
-                transform: translate(-50%, -130%) scale(0.38);
-            }
-            .top-date-banner {
-                top: 10%;
-                font-size: 32px;
-            }
+            .letter-modal.minimized, .ending-text-box.compact { transform: translate(-50%, -130%) scale(0.38); }
+            .top-date-banner { top: 10%; font-size: 42px; }
+            .ending-text-box { font-size: 30px; }
+            .photo-bubble, .photo-bubble .bubble-shell, .photo-bubble .bubble-content { width: 100px; height: 100px; }
+            .heart-element { font-size: 32px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- THẺ NHẠC LOVE2.MP3 -->
     <audio id="bgMusic" loop>
         <source src="love2.mp3" type="audio/mp3">
         Trình duyệt của bạn không hỗ trợ thẻ âm thanh.
@@ -295,10 +238,10 @@
         🎵 <span id="musicStatus">Bật nhạc</span>
     </button>
 
-    <!-- Dòng chữ ngày tháng ở phía trên -->
     <div class="top-date-banner">14/8 ~ 14/10</div>
 
     <canvas id="bgCanvas"></canvas>
+    <div id="bubbleContainer"></div>
 
     <div class="envelope-container" id="envelopeBtn" onclick="openLetter()">
         <div class="envelope">
@@ -306,15 +249,15 @@
         </div>
     </div>
 
-    <!-- Bức thư chính -->
     <div class="letter-modal" id="letterModal" onclick="handleMinimizedLetterClick(event)">
         <div class="letter-title">Gửi Quỳnh Anh ❤️</div>
         <div class="letter-content" id="letterText"></div>
     </div>
 
-    <!-- Khung 3 dòng chữ cuối -->
     <div class="ending-text-box" id="endingTextBox" onclick="handleEndingClick(event)">
-        <span id="endingTextSpan"></span>
+        <div class="fade-line" id="line1">Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.</div>
+        <div class="fade-line" id="line2" style="margin-top: 15px;">Anh ❤️ Quỳnh Anh của anh nhiều lắm!</div>
+        <div class="fade-line highlight-line" id="line3">Nam Yêu Quỳnh Anh.</div>
     </div>
 
     <script>
@@ -326,330 +269,165 @@ Anh biết sau hôm đó dù mình đã quay lại nhưng sự tự nhiên của
 
 Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được, nhưng điều duy nhất anh muốn nói với em là kể từ thời điểm mình yêu nhau, em luôn là điều rất quan trọng với anh, chưa một giây nào anh để những thứ khác làm mình phải lăn tăn, đắn đo với em cả, anh luôn muốn có một tình yêu All in với em. Kể cả những điều anh từng nói đến chuyện lâu dài của 2 đứa cũng là điều thật lòng anh nói, vì anh thật sự nghiêm túc với mối quan hệ này, với em. Anh biết những gì em chứng kiến dù thực hay chỉ là hiểu lầm thì em cũng cần thời gian thích nghi. Buồn thật nhỉ, nhưng lần này anh sẽ không mất bình tĩnh nữa, vì anh tin đến một thời điểm nào đó mình sẽ lại được tự nhiên như xưa và còn tốt hơn thế nữa.`;
 
-        const endingRawHtml = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.<br><br>Anh ❤️ Quỳnh Anh của anh nhiều lắm!<br><br><div class="highlight-line">Nam ❤️ Quỳnh Anh.</div>`;
-        const endingPlainText = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.\n\nAnh ❤️ Quỳnh Anh của anh nhiều lắm!\n\nNam ❤️ Quỳnh Anh.`;
-
-        // --- 1. ĐIỀU KHIỂN NHẠC LOVE2.MP3 ---
         const bgMusic = document.getElementById('bgMusic');
         const musicStatus = document.getElementById('musicStatus');
         let isMusicPlaying = false;
-
         function toggleMusic() {
-            if (isMusicPlaying) {
-                bgMusic.pause();
-                musicStatus.innerText = "Bật nhạc";
-                isMusicPlaying = false;
-            } else {
-                bgMusic.play().then(() => {
-                    musicStatus.innerText = "Tắt nhạc";
-                    isMusicPlaying = true;
-                }).catch(e => {
-                    console.log("Trình duyệt chặn phát nhạc tự động:", e);
-                });
-            }
+            if (isMusicPlaying) { bgMusic.pause(); musicStatus.innerText = "Bật nhạc"; isMusicPlaying = false; }
+            else { bgMusic.play().then(() => { musicStatus.innerText = "Tắt nhạc"; isMusicPlaying = true; }).catch(e => console.log("Trình duyệt chặn:", e)); }
         }
 
-
-        // --- 2. HIỆU ỨNG CANVAS (TỐI ƯU BAY MƯỢT TUYỆT ĐỐI KHÔNG LAG) ---
         const canvas = document.getElementById('bgCanvas');
-        const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
+        const ctx = canvas.getContext('2d', { alpha: true });
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas); resizeCanvas();
         const silkStreams = [];
-        const streamCount = 14; 
-        
-        for (let i = 0; i < streamCount; i++) {
-            silkStreams.push({
-                startX: -100,
-                startY: (canvas.height / streamCount) * i + (Math.random() * 80 - 40),
-                amplitude: Math.random() * 120 + 40,
-                frequency: Math.random() * 0.0009 + 0.0004,
-                speed: Math.random() * 0.35 + 0.1,
-                offset: Math.random() * 2000,
-                thickness: Math.random() * 35 + 4,
-                maxAlpha: Math.random() * 0.14 + 0.02,
-                angleTilt: (Math.random() - 0.5) * 0.35,
-                pulseSpeed: Math.random() * 0.02 + 0.008,
-                pulseOffset: Math.random() * Math.PI * 2
-            });
-        }
-
-        const loadedImages = [];
-        const maxPhotos = 40;
-        for (let i = 1; i <= maxPhotos; i++) {
-            const img = new Image();
-            img.src = `anh (${i}).jpg`;
-            loadedImages.push(img);
-        }
-
-        const heartSymbols = ["❤️", "💖", "💗", "💓", "💞", "💕", "💘", "💌", "✨"];
-
-        const bubbles = [];
-        const bubbleCount = 39; 
-        
-        for (let i = 0; i < bubbleCount; i++) {
-            let isHeart = (i % 3 === 0); 
-
-            bubbles.push({
-                isHeart: isHeart,
-                x: -120 - Math.random() * 400,
-                y: Math.random() * canvas.height,
-                radius: isHeart ? (Math.random() * 16 + 18) : (Math.random() * 28 + 32),
-                speedX: Math.random() * 1.2 + 1.2, // Tốc độ bay ngang ổn định, mượt mà
-                speedY: (Math.random() - 0.5) * 0.6, // Dịch chuyển dọc nhẹ nhàng, không khựng giật
-                imgIndex: Math.floor(Math.random() * maxPhotos),
-                heartText: heartSymbols[Math.floor(Math.random() * heartSymbols.length)],
-                fontSize: Math.random() * 20 + 26,
-                active: false,
-                delay: i * 12
-            });
-        }
-
-        let hasOpenedFirstTime = false;
-        let frameCounter = 0;
-
-        function animate() {
+        for (let i = 0; i < 5; i++) { silkStreams.push({ startY: (canvas.height / 5) * i + (Math.random() * 60 - 30), amplitude: Math.random() * 50 + 20, frequency: Math.random() * 0.0003 + 0.0001, speed: Math.random() * 0.15 + 0.05, offset: Math.random() * 2000, thickness: Math.random() * 15 + 2, maxAlpha: Math.random() * 0.06 + 0.02, angleTilt: (Math.random() - 0.5) * 0.1 }); }
+        function animateSilk() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             silkStreams.forEach(stream => {
-                stream.offset += stream.speed;
-                stream.pulseOffset += stream.pulseSpeed;
+                stream.offset += stream.speed; ctx.save(); ctx.beginPath();
+                for (let x = -50; x <= canvas.width + 50; x += 40) { let y = stream.startY + (x * stream.angleTilt) + Math.sin((x + stream.offset) * stream.frequency) * stream.amplitude; x === -50 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+                let grad = ctx.createLinearGradient(0, 0, canvas.width, 0); grad.addColorStop(0, 'rgba(255, 105, 180, 0)'); grad.addColorStop(0.5, `rgba(255, 192, 203, ${stream.maxAlpha})`); grad.addColorStop(1, 'rgba(255, 105, 180, 0)');
+                ctx.strokeStyle = grad; ctx.lineWidth = stream.thickness; ctx.lineCap = 'round'; ctx.stroke(); ctx.restore();
+            });
+            requestAnimationFrame(animateSilk);
+        }
+        animateSilk();
 
-                let currentAlpha = stream.maxAlpha * (0.6 + 0.4 * Math.sin(stream.pulseOffset));
+        const bubbleContainer = document.getElementById('bubbleContainer');
+        const heartSymbols = ["❤", "💖", "💗", "💓", "💞", "💕", "💘", "💌", "✨"];
+        const maxPhotos = 40;
+        const activeBubbles = [];
+        let bubbleCreationInterval;
 
-                ctx.save();
-                ctx.beginPath();
-
-                let stepSize = 25;
-                let totalLength = canvas.width + 200;
-
-                for (let x = -100; x <= totalLength; x += stepSize) {
-                    let y = stream.startY + 
-                            (x * stream.angleTilt) +
-                            Math.sin((x + stream.offset) * stream.frequency) * stream.amplitude +
-                            Math.cos((x - stream.offset) * 0.0006) * (stream.amplitude * 0.5);
-                    
-                    if (x === -100) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
+        class Bubble {
+            constructor() {
+                this.element = document.createElement('div');
+                this.element.classList.add('floating-bubble');
+                
+                // Tăng tỷ lệ xuất hiện trái tim lên cao, giảm tỷ lệ ảnh đi
+                if (Math.random() < 0.45) {
+                    this.element.classList.add('heart-element');
+                    this.element.innerText = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                } else {
+                    this.element.classList.add('photo-bubble');
+                    const shell = document.createElement('div');
+                    shell.classList.add('bubble-shell');
+                    const content = document.createElement('div');
+                    content.classList.add('bubble-content');
+                    let imgIndex = Math.floor(Math.random() * maxPhotos) + 1;
+                    const img = document.createElement('img');
+                    img.src = `anh (${imgIndex}).jpg`;
+                    img.loading = "lazy";
+                    content.appendChild(img);
+                    this.element.appendChild(content);
+                    this.element.appendChild(shell);
                 }
 
-                let grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
-                grad.addColorStop(0, 'rgba(255, 105, 180, 0)');
-                grad.addColorStop(0.25, `rgba(255, 140, 185, ${currentAlpha})`);
-                grad.addColorStop(0.5, `rgba(255, 192, 203, ${currentAlpha * 1.4})`);
-                grad.addColorStop(0.75, `rgba(255, 140, 185, ${currentAlpha})`);
-                grad.addColorStop(1, 'rgba(255, 105, 180, 0)');
+                bubbleContainer.appendChild(this.element);
 
-                ctx.strokeStyle = grad;
-                ctx.lineWidth = stream.thickness;
-                ctx.lineCap = 'round';
-                ctx.shadowBlur = 30;
-                ctx.shadowColor = 'rgba(255, 105, 180, 0.4)';
-                ctx.stroke();
-                ctx.restore();
-            });
+                this.x = -150 - Math.random() * window.innerWidth * 0.3;
+                this.y = window.innerHeight + 150 + Math.random() * 150;
+                
+                this.vx = Math.random() * 2.5 + 2.0; 
+                this.vy = -(Math.random() * 1.5 + 1.8);  
 
-            if (hasOpenedFirstTime) {
-                frameCounter++;
-                bubbles.forEach(b => {
-                    if (!b.active && frameCounter >= b.delay) {
-                        b.active = true;
-                    }
-                });
+                this.amplitude = Math.random() * 70 + 30; 
+                this.frequency = Math.random() * 0.005 + 0.002; 
+                this.phase = Math.random() * Math.PI * 2; 
+
+                this.opacity = 1;
+                this.element.style.opacity = 1;
             }
 
-            bubbles.forEach(b => {
-                if (b.active) {
-                    b.x += b.speedX;
-                    b.y += b.speedY; 
+            update(deltaTime) {
+                this.x += this.vx;
+                this.y += this.vy;
 
-                    // Khi bay ra khỏi mép phải màn hình, tái tạo lại mượt mà ở mép trái
-                    if (b.x > canvas.width + b.radius * 2) {
-                        b.x = -100;
-                        b.y = Math.random() * canvas.height;
-                        b.speedX = Math.random() * 1.2 + 1.2;
-                        b.speedY = (Math.random() - 0.5) * 0.6;
-                        b.imgIndex = Math.floor(Math.random() * maxPhotos);
-                        b.heartText = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
-                    }
+                let waveOffset = Math.sin(this.x * this.frequency + this.phase) * this.amplitude;
+                this.element.style.transform = `translate(${this.x}px, ${this.y + waveOffset}px) translateZ(0)`;
 
-                    ctx.save();
+                return (this.x < window.innerWidth + 200 && this.y + waveOffset > -200);
+            }
 
-                    if (b.isHeart) {
-                        ctx.font = `${b.fontSize}px sans-serif`;
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.shadowBlur = 12;
-                        ctx.shadowColor = 'rgba(255, 105, 180, 0.8)';
-                        ctx.fillText(b.heartText, b.x, b.y);
-                    } else {
-                        ctx.save();
-                        ctx.beginPath();
-                        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-                        ctx.closePath();
-                        ctx.clip();
-
-                        const img = loadedImages[b.imgIndex];
-                        if (img && img.complete && img.naturalWidth !== 0) {
-                            let diameter = b.radius * 2;
-                            let imgRatio = img.naturalWidth / img.naturalHeight;
-                            let renderWidth, renderHeight, offsetX, offsetY;
-
-                            if (imgRatio > 1) {
-                                renderHeight = diameter;
-                                renderWidth = diameter * imgRatio;
-                                offsetX = b.x - (renderWidth - diameter) / 2 - b.radius;
-                                offsetY = b.y - b.radius;
-                            } else {
-                                renderWidth = diameter;
-                                renderHeight = diameter / imgRatio;
-                                offsetX = b.x - b.radius;
-                                offsetY = b.y - (renderHeight - diameter) / 2 - b.radius;
-                            }
-
-                            ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
-                        } else {
-                            ctx.fillStyle = '#ffb6c1';
-                            ctx.fill();
-                        }
-                        ctx.restore();
-
-                        const rainbowGlow = ctx.createRadialGradient(
-                            b.x - b.radius * 0.3, b.y - b.radius * 0.3, b.radius * 0.1,
-                            b.x, b.y, b.radius
-                        );
-                        rainbowGlow.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
-                        rainbowGlow.addColorStop(0.3, 'rgba(255, 182, 193, 0.25)');
-                        rainbowGlow.addColorStop(0.5, 'rgba(255, 255, 150, 0.25)');
-                        rainbowGlow.addColorStop(0.7, 'rgba(150, 222, 255, 0.25)');
-                        rainbowGlow.addColorStop(0.9, 'rgba(221, 160, 221, 0.3)');
-                        rainbowGlow.addColorStop(1, 'rgba(255, 255, 255, 0.6)');
-
-                        ctx.beginPath();
-                        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-                        ctx.fillStyle = rainbowGlow;
-                        ctx.fill();
-
-                        ctx.beginPath();
-                        ctx.arc(b.x - b.radius * 0.35, b.y - b.radius * 0.35, b.radius * 0.2, 0, Math.PI * 2);
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-                        ctx.fill();
-
-                        ctx.beginPath();
-                        ctx.arc(b.x - b.radius * 0.5, b.y - b.radius * 0.15, b.radius * 0.08, 0, Math.PI * 2);
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-                        ctx.fill();
-                    }
-
-                    ctx.restore();
-                }
-            });
-
-            requestAnimationFrame(animate);
+            remove() {
+                this.element.remove();
+            }
         }
-        animate();
 
+        let lastTime = 0;
+        function gameLoop(currentTime) {
+            if (!lastTime) lastTime = currentTime;
+            const deltaTime = currentTime - lastTime;
+            lastTime = currentTime;
 
-        // --- 3. ĐIỀU KHIỂN HIỆU ỨNG GÕ CHỮ VÀ CHUYỂN ĐỔI 3D ---
-        let isFirstOpen = true;
-
-        function startTypingEffect() {
-            const textContainer = document.getElementById('letterText');
-            textContainer.innerHTML = "";
-            let index = 0;
-
-            function type() {
-                if (index < fullText.length) {
-                    textContainer.innerHTML += fullText.charAt(index);
-                    index++;
-                    textContainer.scrollTop = textContainer.scrollHeight;
-                    setTimeout(type, 25);
-                } else {
-                    setTimeout(() => {
-                        showEndingTextCenter();
-                    }, 600);
+            for (let i = activeBubbles.length - 1; i >= 0; i--) {
+                if (!activeBubbles[i].update(deltaTime)) {
+                    activeBubbles[i].remove();
+                    activeBubbles.splice(i, 1);
                 }
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        function createSingleBubble() {
+            activeBubbles.push(new Bubble());
+            activeBubbles.push(new Bubble());
+        }
+
+        function startContinuousBubbles() {
+            if (bubbleCreationInterval) clearInterval(bubbleCreationInterval);
+            createSingleBubble(); 
+            // Giảm nhịp sinh ra để làm thưa mật độ ảnh tổng thể đi khoảng 1/3
+            bubbleCreationInterval = setInterval(createSingleBubble, 650);
+            requestAnimationFrame(gameLoop); 
+        }
+
+        let isFirstOpen = true;
+        function startTypingEffect() {
+            const textContainer = document.getElementById('letterText'); textContainer.innerHTML = "";
+            let index = 0;
+            function type() {
+                if (index < fullText.length) { textContainer.innerHTML += fullText.charAt(index); index++; textContainer.scrollTop = textContainer.scrollHeight; setTimeout(type, 28); }
+                else { setTimeout(showEndingLines, 800); }
             }
             type();
         }
 
-        function showEndingTextCenter() {
-            const modal = document.getElementById('letterModal');
+        function showEndingLines() {
+            const modal = document.getElementById('letterModal'); 
             const endingBox = document.getElementById('endingTextBox');
-            const endingSpan = document.getElementById('endingTextSpan');
-
-            modal.classList.add('minimized');
-
+            
+            modal.classList.add('minimized'); 
             endingBox.classList.add('show');
-            endingBox.classList.remove('compact');
-            endingSpan.innerHTML = "";
 
-            let index = 0;
-            function typeEnding() {
-                if (index < endingPlainText.length) {
-                    let char = endingPlainText.charAt(index);
-                    if (char === '\n') {
-                        endingSpan.innerHTML += "<br>";
-                    } else {
-                        endingSpan.innerHTML += char;
-                    }
-                    index++;
-                    setTimeout(typeEnding, 30);
-                } else {
-                    endingSpan.innerHTML = endingRawHtml;
-                }
-            }
-            typeEnding();
+            setTimeout(() => { document.getElementById('line1').classList.add('visible'); }, 300);
+            setTimeout(() => { document.getElementById('line2').classList.add('visible'); }, 2200);
+            setTimeout(() => { document.getElementById('line3').classList.add('visible'); }, 4100);
         }
 
         function handleEndingClick(event) {
-            const endingBox = document.getElementById('endingTextBox');
-            if (!endingBox.classList.contains('compact')) return; 
-
-            const modal = document.getElementById('letterModal');
-
-            endingBox.classList.remove('compact');
-            endingBox.classList.add('show');
-            modal.classList.remove('show');
-            modal.classList.add('minimized');
+            const endingBox = document.getElementById('endingTextBox'); if (!endingBox.classList.contains('compact')) return;
+            const modal = document.getElementById('letterModal'); endingBox.classList.remove('compact'); endingBox.classList.add('show'); modal.classList.remove('show'); modal.classList.add('minimized');
         }
 
         function handleMinimizedLetterClick(event) {
-            const modal = document.getElementById('letterModal');
-            if (!modal.classList.contains('minimized')) return; 
-
-            const endingBox = document.getElementById('endingTextBox');
-
-            modal.classList.remove('minimized');
-            modal.classList.add('show');
-            endingBox.classList.remove('show');
-            endingBox.classList.add('compact');
+            const modal = document.getElementById('letterModal'); if (!modal.classList.contains('minimized')) return;
+            const endingBox = document.getElementById('endingTextBox'); modal.classList.remove('minimized'); modal.classList.add('show'); endingBox.classList.remove('show'); endingBox.classList.add('compact');
         }
 
         function openLetter() {
-            const container = document.getElementById('envelopeBtn');
-            const modal = document.getElementById('letterModal');
-
+            const container = document.getElementById('envelopeBtn'); const modal = document.getElementById('letterModal');
             container.classList.add('open');
             setTimeout(() => {
                 modal.classList.add('show');
-                
                 if (isFirstOpen) {
-                    startTypingEffect();
-                    hasOpenedFirstTime = true; 
-                    isFirstOpen = false;
+                    startContinuousBubbles(); 
+                    startTypingEffect(); isFirstOpen = false;
                 }
             }, 300);
-
-            if (!isMusicPlaying) {
-                toggleMusic();
-            }
+            if (!isMusicPlaying) toggleMusic();
         }
     </script>
 </body>
