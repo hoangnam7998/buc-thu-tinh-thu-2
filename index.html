@@ -33,7 +33,6 @@
             height: 100%;
             pointer-events: none;
             z-index: 1;
-            /* Thêm hiệu ứng mờ nhẹ cho nền để các dải màu trông mịn màng hơn */
             filter: blur(2px);
         }
 
@@ -98,7 +97,7 @@
             filter: blur(1px);
         }
 
-        /* Bong bóng trái tim */
+        /* --- TRÁI TIM BAY (ĐÃ GỠ LỚP VỎ BONG BÓNG KÍNH) --- */
         .heart-bubble {
             font-size: 38px;
             text-shadow: 0 0 15px rgba(255, 105, 180, 0.9);
@@ -110,22 +109,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-        .heart-bubble .bubble-shell {
-            position: absolute;
-            top: -8px; left: -8px; right: -8px; bottom: -8px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, 
-                rgba(255, 255, 255, 0.6) 0%, 
-                rgba(255, 255, 255, 0.2) 40%, 
-                rgba(255, 182, 193, 0.05) 100%
-            );
-            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.3);
-            -webkit-backdrop-filter: blur(1px);
-            backdrop-filter: blur(1px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            z-index: 2;
-            pointer-events: none;
         }
 
         @keyframes bubbleWobble {
@@ -298,30 +281,29 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
             else { bgMusic.play().then(() => { musicStatus.innerText = "Tắt nhạc"; isMusicPlaying = true; }).catch(e => console.log("Trình duyệt chặn:", e)); }
         }
 
-        // --- HIỆU ỨNG NỀN (SILK/AURORA) ĐÃ SỬA ĐỔI ---
+        // --- HIỆU ỨNG NỀN (SILK/AURORA) ---
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d', { alpha: true });
         function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         window.addEventListener('resize', resizeCanvas); resizeCanvas();
 
         const silkStreams = [];
-        // Tăng số lượng dải màu lên 8 (thay vì 5) để tăng mật độ
         for (let i = 0; i < 8; i++) { 
             silkStreams.push({ 
                 startY: (canvas.height / 8) * i + (Math.random() * 100 - 50), 
-                amplitude: Math.random() * 150 + 100, // Tăng độ uốn lượn (to hơn)
-                frequency: Math.random() * 0.0008 + 0.0004, // Tần số sóng
+                amplitude: Math.random() * 150 + 100, 
+                frequency: Math.random() * 0.0008 + 0.0004, 
                 speed: Math.random() * 0.2 + 0.08, 
                 offset: Math.random() * 2000, 
-                thickness: Math.random() * 80 + 50, // Tăng độ dày nét vẽ (dải màu to)
-                maxAlpha: Math.random() * 0.06 + 0.03, // Độ mờ
-                hue: Math.random() * 40 + 310 // Dải màu hồng tím (310-350)
+                thickness: Math.random() * 80 + 50, 
+                maxAlpha: Math.random() * 0.06 + 0.03, 
+                hue: Math.random() * 40 + 310 
             }); 
         }
 
         function animateSilk() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.globalCompositeOperation = 'lighter'; // Tạo hiệu ứng sáng chồng lên nhau
+            ctx.globalCompositeOperation = 'lighter';
             
             silkStreams.forEach(stream => {
                 stream.offset += stream.speed; 
@@ -329,7 +311,6 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
                 ctx.beginPath();
 
                 let gradient = ctx.createLinearGradient(0, stream.startY, 0, stream.startY + stream.thickness);
-                // Màu từ điểm cong hất lên/xuống sẽ nhạt dần (alpha -> 0)
                 gradient.addColorStop(0, `hsla(${stream.hue}, 90%, 70%, 0)`);
                 gradient.addColorStop(0.5, `hsla(${stream.hue}, 90%, 70%, ${stream.maxAlpha})`);
                 gradient.addColorStop(1, `hsla(${stream.hue}, 90%, 70%, 0)`);
@@ -348,7 +329,7 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
         }
         animateSilk();
 
-        // --- HỆ THỐNG BONG BÓNG ---
+        // --- HỆ THỐNG BONG BÓNG & TRÁI TIM ---
         const bubbleContainer = document.getElementById('bubbleContainer');
         const heartSymbols = ["❤", "💖", "💗", "💓", "💞", "💕", "💘", "💌", "✨"];
         const maxPhotos = 40;
@@ -360,26 +341,31 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
                 this.element = document.createElement('div');
                 this.element.classList.add('floating-bubble');
                 
-                const shell = document.createElement('div');
-                shell.classList.add('bubble-shell');
-                
                 const content = document.createElement('div');
                 content.classList.add('bubble-content');
 
                 if (Math.random() < 0.16) {
+                    // Trái tim bay độc lập (không có lớp vỏ bong bóng kính)
                     this.element.classList.add('heart-bubble');
                     content.innerText = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                    this.element.appendChild(content);
                 } else {
+                    // Bong bóng ảnh có lớp vỏ kính trong suốt
                     this.element.classList.add('photo-bubble');
+                    
+                    const shell = document.createElement('div');
+                    shell.classList.add('bubble-shell');
+                    
                     let imgIndex = Math.floor(Math.random() * maxPhotos) + 1;
                     const img = document.createElement('img');
                     img.src = `anh (${imgIndex}).jpg`;
                     img.loading = "lazy";
                     content.appendChild(img);
+
+                    this.element.appendChild(content);
+                    this.element.appendChild(shell);
                 }
 
-                this.element.appendChild(content);
-                this.element.appendChild(shell);
                 bubbleContainer.appendChild(this.element);
 
                 this.x = -150 - Math.random() * window.innerWidth * 0.3;
