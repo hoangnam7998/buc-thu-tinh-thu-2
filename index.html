@@ -23,7 +23,6 @@
             perspective: 1200px;
         }
 
-        /* Canvas hiệu ứng gió & bong bóng */
         #bgCanvas {
             position: fixed;
             top: 0;
@@ -34,7 +33,6 @@
             z-index: 1;
         }
 
-        /* Nút điều khiển nhạc riêng */
         .music-control {
             position: fixed;
             top: 20px;
@@ -59,7 +57,6 @@
             transform: scale(1.05);
         }
 
-        /* --- DÒNG CHỮ 14/8 ~ 14/10 Ở PHÍA TRÊN BỨC THƯ --- */
         @keyframes dateGlowPulse {
             0% {
                 text-shadow: 0 0 10px rgba(255, 105, 180, 0.5), 0 0 20px rgba(255, 20, 147, 0.3), 0 0 35px rgba(255, 192, 203, 0.2);
@@ -88,7 +85,6 @@
             animation: dateGlowPulse 3s infinite ease-in-out;
         }
 
-        /* Phong bì thư ở giữa */
         .envelope-container {
             position: relative;
             z-index: 10;
@@ -150,7 +146,6 @@
             position: absolute;
         }
 
-        /* --- BỨC THƯ CHÍNH & 3 DÒNG CUỐI: CHUNG TỌA ĐỘ 3D --- */
         .letter-modal, .ending-text-box {
             position: fixed;
             top: 55%;
@@ -160,7 +155,6 @@
             will-change: transform, opacity;
         }
 
-        /* 1. Bức thư chính */
         .letter-modal {
             width: 90%;
             max-width: 550px;
@@ -221,7 +215,6 @@
             border-radius: 3px;
         }
 
-        /* 2. Khung chứa 3 dòng chữ cuối */
         @keyframes textGlowPulse {
             0% {
                 text-shadow: 0 0 10px rgba(255, 105, 180, 0.4), 0 0 20px rgba(255, 20, 147, 0.2), 0 0 30px rgba(255, 192, 203, 0.1);
@@ -285,7 +278,6 @@
 </head>
 <body>
 
-    <!-- THẺ NHẠC LOVE2.MP3 -->
     <audio id="bgMusic" loop>
         <source src="love2.mp3" type="audio/mp3">
         Trình duyệt của bạn không hỗ trợ thẻ âm thanh.
@@ -295,7 +287,6 @@
         🎵 <span id="musicStatus">Bật nhạc</span>
     </button>
 
-    <!-- Dòng chữ ngày tháng ở phía trên -->
     <div class="top-date-banner">14/8 ~ 14/10</div>
 
     <canvas id="bgCanvas"></canvas>
@@ -306,13 +297,11 @@
         </div>
     </div>
 
-    <!-- Bức thư chính -->
     <div class="letter-modal" id="letterModal" onclick="handleMinimizedLetterClick(event)">
         <div class="letter-title">Gửi Quỳnh Anh ❤️</div>
         <div class="letter-content" id="letterText"></div>
     </div>
 
-    <!-- Khung 3 dòng chữ cuối -->
     <div class="ending-text-box" id="endingTextBox" onclick="handleEndingClick(event)">
         <span id="endingTextSpan"></span>
     </div>
@@ -326,10 +315,9 @@ Anh biết sau hôm đó dù mình đã quay lại nhưng sự tự nhiên của
 
 Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được, nhưng điều duy nhất anh muốn nói với em là kể từ thời điểm mình yêu nhau, em luôn là điều rất quan trọng với anh, chưa một giây nào anh để những thứ khác làm mình phải lăn tăn, đắn đo với em cả, anh luôn muốn có một tình yêu All in với em. Kể cả những điều anh từng nói đến chuyện lâu dài của 2 đứa cũng là điều thật lòng anh nói, vì anh thật sự nghiêm túc với mối quan hệ này, với em. Anh biết những gì em chứng kiến dù thực hay chỉ là hiểu lầm thì em cũng cần thời gian thích nghi. Buồn thật nhỉ, nhưng lần này anh sẽ không mất bình tĩnh nữa, vì anh tin đến một thời điểm nào đó mình sẽ lại được tự nhiên như xưa và còn tốt hơn thế nữa.`;
 
-        const endingRawHtml = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.<br><br>Anh ❤️ Quỳnh Anh của anh nhiều lắm!<br><br><div class="highlight-line">Nam ❤️ Quỳnh Anh.</div>`;
-        const endingPlainText = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.\n\nAnh ❤️ Quỳnh Anh của anh nhiều lắm!\n\nNam ❤️ Quỳnh Anh.`;
+        const endingRawHtml = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.<br><br>Anh ❤️️ Quỳnh Anh của anh nhiều lắm!<br><br><div class="highlight-line">Nam ❤️️ Quỳnh Anh.</div>`;
+        const endingPlainText = `Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.\n\nAnh ❤️ Quỳnh Anh của anh nhiều lắm!\n\nNam ❤️️ Quỳnh Anh.`;
 
-        // --- 1. ĐIỀU KHIỂN NHẠC LOVE2.MP3 ---
         const bgMusic = document.getElementById('bgMusic');
         const musicStatus = document.getElementById('musicStatus');
         let isMusicPlaying = false;
@@ -349,10 +337,8 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
             }
         }
 
-
-        // --- 2. HIỆU ỨNG CANVAS (TỐI ƯU BAY MƯỢT TUYỆT ĐỐI KHÔNG LAG) ---
         const canvas = document.getElementById('bgCanvas');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { alpha: true });
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -362,20 +348,20 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
         resizeCanvas();
 
         const silkStreams = [];
-        const streamCount = 14; 
+        const streamCount = 8; // Giảm số lượng dải lụa để tăng tốc độ khung hình
         
         for (let i = 0; i < streamCount; i++) {
             silkStreams.push({
                 startX: -100,
                 startY: (canvas.height / streamCount) * i + (Math.random() * 80 - 40),
-                amplitude: Math.random() * 120 + 40,
-                frequency: Math.random() * 0.0009 + 0.0004,
-                speed: Math.random() * 0.35 + 0.1,
+                amplitude: Math.random() * 80 + 30,
+                frequency: Math.random() * 0.0007 + 0.0003,
+                speed: Math.random() * 0.25 + 0.1,
                 offset: Math.random() * 2000,
-                thickness: Math.random() * 35 + 4,
-                maxAlpha: Math.random() * 0.14 + 0.02,
-                angleTilt: (Math.random() - 0.5) * 0.35,
-                pulseSpeed: Math.random() * 0.02 + 0.008,
+                thickness: Math.random() * 25 + 4,
+                maxAlpha: Math.random() * 0.1 + 0.02,
+                angleTilt: (Math.random() - 0.5) * 0.2,
+                pulseSpeed: Math.random() * 0.015 + 0.005,
                 pulseOffset: Math.random() * Math.PI * 2
             });
         }
@@ -391,23 +377,22 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
         const heartSymbols = ["❤️", "💖", "💗", "💓", "💞", "💕", "💘", "💌", "✨"];
 
         const bubbles = [];
-        const bubbleCount = 39; 
+        const bubbleCount = 20; // Giới hạn số lượng bong bóng để loại bỏ hoàn toàn hiện tượng giật hình
         
         for (let i = 0; i < bubbleCount; i++) {
             let isHeart = (i % 3 === 0); 
-
             bubbles.push({
                 isHeart: isHeart,
-                x: -120 - Math.random() * 400,
+                x: -120 - Math.random() * 600,
                 y: Math.random() * canvas.height,
-                radius: isHeart ? (Math.random() * 16 + 18) : (Math.random() * 28 + 32),
-                speedX: Math.random() * 1.2 + 1.2, // Tốc độ bay ngang ổn định, mượt mà
-                speedY: (Math.random() - 0.5) * 0.6, // Dịch chuyển dọc nhẹ nhàng, không khựng giật
+                radius: isHeart ? (Math.random() * 14 + 16) : (Math.random() * 24 + 28),
+                speedX: Math.random() * 1.0 + 1.0,
+                speedY: (Math.random() - 0.5) * 0.4,
                 imgIndex: Math.floor(Math.random() * maxPhotos),
                 heartText: heartSymbols[Math.floor(Math.random() * heartSymbols.length)],
-                fontSize: Math.random() * 20 + 26,
+                fontSize: Math.random() * 18 + 22,
                 active: false,
-                delay: i * 12
+                delay: i * 15
             });
         }
 
@@ -426,14 +411,13 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
                 ctx.save();
                 ctx.beginPath();
 
-                let stepSize = 25;
+                let stepSize = 40; // Tăng bước nhảy để tối ưu hiệu năng vẽ
                 let totalLength = canvas.width + 200;
 
                 for (let x = -100; x <= totalLength; x += stepSize) {
                     let y = stream.startY + 
                             (x * stream.angleTilt) +
-                            Math.sin((x + stream.offset) * stream.frequency) * stream.amplitude +
-                            Math.cos((x - stream.offset) * 0.0006) * (stream.amplitude * 0.5);
+                            Math.sin((x + stream.offset) * stream.frequency) * stream.amplitude;
                     
                     if (x === -100) ctx.moveTo(x, y);
                     else ctx.lineTo(x, y);
@@ -441,16 +425,12 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
 
                 let grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
                 grad.addColorStop(0, 'rgba(255, 105, 180, 0)');
-                grad.addColorStop(0.25, `rgba(255, 140, 185, ${currentAlpha})`);
-                grad.addColorStop(0.5, `rgba(255, 192, 203, ${currentAlpha * 1.4})`);
-                grad.addColorStop(0.75, `rgba(255, 140, 185, ${currentAlpha})`);
+                grad.addColorStop(0.5, `rgba(255, 192, 203, ${currentAlpha * 1.2})`);
                 grad.addColorStop(1, 'rgba(255, 105, 180, 0)');
 
                 ctx.strokeStyle = grad;
                 ctx.lineWidth = stream.thickness;
                 ctx.lineCap = 'round';
-                ctx.shadowBlur = 30;
-                ctx.shadowColor = 'rgba(255, 105, 180, 0.4)';
                 ctx.stroke();
                 ctx.restore();
             });
@@ -469,12 +449,11 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
                     b.x += b.speedX;
                     b.y += b.speedY; 
 
-                    // Khi bay ra khỏi mép phải màn hình, tái tạo lại mượt mà ở mép trái
                     if (b.x > canvas.width + b.radius * 2) {
                         b.x = -100;
                         b.y = Math.random() * canvas.height;
-                        b.speedX = Math.random() * 1.2 + 1.2;
-                        b.speedY = (Math.random() - 0.5) * 0.6;
+                        b.speedX = Math.random() * 1.0 + 1.0;
+                        b.speedY = (Math.random() - 0.5) * 0.4;
                         b.imgIndex = Math.floor(Math.random() * maxPhotos);
                         b.heartText = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
                     }
@@ -485,8 +464,6 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
                         ctx.font = `${b.fontSize}px sans-serif`;
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
-                        ctx.shadowBlur = 12;
-                        ctx.shadowColor = 'rgba(255, 105, 180, 0.8)';
                         ctx.fillText(b.heartText, b.x, b.y);
                     } else {
                         ctx.save();
@@ -498,52 +475,24 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
                         const img = loadedImages[b.imgIndex];
                         if (img && img.complete && img.naturalWidth !== 0) {
                             let diameter = b.radius * 2;
-                            let imgRatio = img.naturalWidth / img.naturalHeight;
-                            let renderWidth, renderHeight, offsetX, offsetY;
-
-                            if (imgRatio > 1) {
-                                renderHeight = diameter;
-                                renderWidth = diameter * imgRatio;
-                                offsetX = b.x - (renderWidth - diameter) / 2 - b.radius;
-                                offsetY = b.y - b.radius;
-                            } else {
-                                renderWidth = diameter;
-                                renderHeight = diameter / imgRatio;
-                                offsetX = b.x - b.radius;
-                                offsetY = b.y - (renderHeight - diameter) / 2 - b.radius;
-                            }
-
-                            ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
+                            ctx.drawImage(img, b.x - b.radius, b.y - b.radius, diameter, diameter);
                         } else {
                             ctx.fillStyle = '#ffb6c1';
                             ctx.fill();
                         }
                         ctx.restore();
 
-                        const rainbowGlow = ctx.createRadialGradient(
-                            b.x - b.radius * 0.3, b.y - b.radius * 0.3, b.radius * 0.1,
-                            b.x, b.y, b.radius
-                        );
-                        rainbowGlow.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
-                        rainbowGlow.addColorStop(0.3, 'rgba(255, 182, 193, 0.25)');
-                        rainbowGlow.addColorStop(0.5, 'rgba(255, 255, 150, 0.25)');
-                        rainbowGlow.addColorStop(0.7, 'rgba(150, 222, 255, 0.25)');
-                        rainbowGlow.addColorStop(0.9, 'rgba(221, 160, 221, 0.3)');
-                        rainbowGlow.addColorStop(1, 'rgba(255, 255, 255, 0.6)');
-
+                        // Viền bong bóng đơn giản, không dùng shadowBlur nặng nề để đảm bảo mượt mà
                         ctx.beginPath();
                         ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-                        ctx.fillStyle = rainbowGlow;
-                        ctx.fill();
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
 
+                        // Điểm sáng phản chiếu trên bong bóng
                         ctx.beginPath();
                         ctx.arc(b.x - b.radius * 0.35, b.y - b.radius * 0.35, b.radius * 0.2, 0, Math.PI * 2);
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-                        ctx.fill();
-
-                        ctx.beginPath();
-                        ctx.arc(b.x - b.radius * 0.5, b.y - b.radius * 0.15, b.radius * 0.08, 0, Math.PI * 2);
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
                         ctx.fill();
                     }
 
@@ -555,25 +504,30 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
         }
         animate();
 
-
-        // --- 3. ĐIỀU KHIỂN HIỆU ỨNG GÕ CHỮ VÀ CHUYỂN ĐỔI 3D ---
         let isFirstOpen = true;
 
         function startTypingEffect() {
             const textContainer = document.getElementById('letterText');
             textContainer.innerHTML = "";
             let index = 0;
+            let batchSize = 3; // Gõ từng cụm từ nhỏ để tăng tốc độ hiển thị và giảm tải DOM
 
             function type() {
                 if (index < fullText.length) {
-                    textContainer.innerHTML += fullText.charAt(index);
-                    index++;
-                    textContainer.scrollTop = textContainer.scrollHeight;
-                    setTimeout(type, 25);
+                    let chunk = fullText.substr(index, batchSize);
+                    textContainer.innerHTML += chunk;
+                    index += batchSize;
+                    
+                    // Chỉ cuộn khung khi cần thiết để tránh ép layout liên tục
+                    if (index % 30 === 0) {
+                        textContainer.scrollTop = textContainer.scrollHeight;
+                    }
+                    setTimeout(type, 15);
                 } else {
+                    textContainer.scrollTop = textContainer.scrollHeight;
                     setTimeout(() => {
                         showEndingTextCenter();
-                    }, 600);
+                    }, 500);
                 }
             }
             type();
@@ -585,7 +539,6 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
             const endingSpan = document.getElementById('endingTextSpan');
 
             modal.classList.add('minimized');
-
             endingBox.classList.add('show');
             endingBox.classList.remove('compact');
             endingSpan.innerHTML = "";
@@ -600,7 +553,7 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
                         endingSpan.innerHTML += char;
                     }
                     index++;
-                    setTimeout(typeEnding, 30);
+                    setTimeout(typeEnding, 20);
                 } else {
                     endingSpan.innerHTML = endingRawHtml;
                 }
@@ -613,7 +566,6 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
             if (!endingBox.classList.contains('compact')) return; 
 
             const modal = document.getElementById('letterModal');
-
             endingBox.classList.remove('compact');
             endingBox.classList.add('show');
             modal.classList.remove('show');
@@ -625,7 +577,6 @@ Những chuyện đã xảy ra rồi mình cũng không thể xóa đi được,
             if (!modal.classList.contains('minimized')) return; 
 
             const endingBox = document.getElementById('endingTextBox');
-
             modal.classList.remove('minimized');
             modal.classList.add('show');
             endingBox.classList.remove('show');
