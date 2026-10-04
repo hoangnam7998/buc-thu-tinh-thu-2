@@ -158,13 +158,13 @@
         }
         .music-control:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
 
-        /* --- BANNER NGÀY THÁNG & BÓNG SÁNG TRÁI TIM TO BAO TRÙM --- */
+        /* --- BANNER NGÀY THÁNG & BÓNG SÁNG TRÁI TIM RỘNG LỚN BAO TRÙM --- */
         @keyframes dateGlowPulse { 
             0%, 100% { text-shadow: 0 0 10px rgba(255, 105, 180, 0.6), 0 0 20px rgba(255, 105, 180, 0.4); } 
             50% { text-shadow: 0 0 25px rgba(255, 20, 147, 1), 0 0 45px rgba(255, 105, 180, 0.9); } 
         }
 
-        /* Hiệu ứng bóng sáng hình trái tim to nhấp nháy nhẹ */
+        /* Hiệu ứng bóng sáng hình trái tim nhấp nháy nhẹ */
         @keyframes heartGlowPulse {
             0%, 100% {
                 opacity: 0.35;
@@ -184,23 +184,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 50px;
+            gap: 120px; /* Tăng khoảng cách để đẩy 2 ảnh ra xa hơn, nằm gọn trong trái tim lớn */
             width: 100%;
+            max-width: 1200px;
             transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* Bóng sáng hình trái tim kích thước lớn bao trọn cả ảnh và ngày tháng */
+        /* Bóng sáng hình trái tim cực lớn, đảm bảo ôm trọn hai ảnh và ngày tháng */
         .top-date-banner::before {
             content: '';
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 900px;
-            height: 320px;
+            width: 1100px;
+            height: 380px;
             background: radial-gradient(ellipse at center, rgba(255, 105, 180, 0.45) 0%, rgba(255, 20, 147, 0.18) 45%, rgba(0, 0, 0, 0) 75%);
-            /* Path trái tim được mở rộng bề ngang để ôm trọn hai bên ảnh */
-            clip-path: path('M450,290 C450,290 740,180 740,95 C740,45 680,15 620,15 C560,15 500,45 450,110 C400,45 340,15 280,15 C220,15 160,45 160,95 C160,180 450,290 450,290 Z');
-            filter: blur(30px); /* Làm mờ nhòe viền tối đa để hòa vào nền đen */
+            /* Mở rộng bề ngang clip-path tối đa */
+            clip-path: path('M550,350 C550,350 900,210 900,110 C900,50 830,15 755,15 C680,15 610,50 550,130 C490,50 420,15 345,15 C270,15 200,50 200,110 C200,210 550,350 550,350 Z');
+            filter: blur(35px); /* Làm mờ nhòe viền mượt mà hòa vào không gian tối */
             z-index: -1;
             pointer-events: none;
             opacity: 0;
@@ -210,7 +211,7 @@
 
         /* Khi kích hoạt phóng to và nhấp nháy bóng sáng */
         .top-date-banner.emphasize {
-            transform: translateX(-50%) scale(1.12);
+            transform: translateX(-50%) scale(1.1);
         }
 
         .top-date-banner.emphasize::before {
@@ -350,7 +351,7 @@
 
         @media (max-width: 768px) {
             .letter-modal.minimized, .ending-text-box.compact { transform: translate(-50%, -130%) scale(0.38); }
-            .top-date-banner { top: 10%; font-size: 36px; gap: 15px; }
+            .top-date-banner { top: 10%; font-size: 36px; gap: 40px; }
             .side-avatar-wrapper { width: 65px; height: 65px; }
             .ending-text-box { font-size: 28px; padding: 25px 20px; }
             .photo-bubble, .photo-bubble .bubble-shell, .photo-bubble .bubble-content { width: 100px; height: 100px; }
@@ -397,16 +398,22 @@
     </div>
 
     <div class="ending-text-box" id="endingTextBox" onclick="handleEndingClick(event)">
-        <div class="fade-line" id="line1">Thui hết đoạn sến súa dãi bài rồi. Và sau tất cả anh vẫn muốn nói là.</div>
+        <div class="fade-line" id="line1">Và sau tất cả anh vẫn muốn nói là.</div>
         <div class="fade-line" id="line2" style="margin-top: 12px;">Anh ❤️ Quỳnh Anh của anh nhiều lắm!</div>
-        <div class="fade-line highlight-line" id="line3">Nam Yêu Quỳnh Anh.</div>
+        <div class="fade-line highlight-line" id="line3">Nam ❤️ Quỳnh Anh.</div>
     </div>
 
     <script>
-        // --- NỘI DUNG THƯ ---
-        const fullText = `Chúng mình đã chính thức yêu nhau được 2 tháng này rồi bé.
+        // --- NỘI DUNG THƯ ĐÃ CẬP NHẬT ---
+        const fullText = `Happy Ani 2 month của chúng ta.
+
 Đây là bức thư tình thứ 2 trong chuyên mục mỗi tháng 1 bó hoa kỉ niệm của chúng ta và 1 bức thư tình gửi đến bé.
-Tháng thứ 2 đầy ắp những niềm vui, nhưng cũng có một số khoảng lặng nhỉ. Cảm ơn vì sau tất cả vẫn cho anh tiếp tục được yêu thương em, cho anh được có cơ hội chứng minh lại những điều anh từng làm chưa tốt. Em có thể dành một chút thời gian nghe anh già này sến súa thật lòng một chút được không.`;
+
+Tháng thứ 2 đầy ắp những niềm vui, nhưng cũng có một số khoảng lặng nhỉ. Cảm ơn vì sau tất cả vẫn cho anh tiếp tục được yêu thương em, cho anh được có cơ hội chứng minh lại những điều anh từng làm chưa tốt. 
+
+Cảm ơn bé vì đã xuất hiện, mang đến cho anh nhiều khoảnh khắc đẹp. 
+
+Hi vọng trên hành trình phía trước cả hai ta luôn có nhau và cùng nhau trải qua những khoảnh khắc hạnh phúc hơn nữa.`;
 
         // --- XỬ LÝ NHẠC NỀN ---
         const bgMusic = document.getElementById('bgMusic');
@@ -597,7 +604,7 @@ Tháng thứ 2 đầy ắp những niềm vui, nhưng cũng có một số kho�
                 rightAvatar.classList.add('transformed');
             }, 1500);
 
-            // Bước 3: Đúng lúc ảnh nở xong (sau 2.5s), toàn bộ phần ảnh và ngày tháng phóng to kèm bóng sáng trái tim lớn bao trùm nhấp nháy phía sau
+            // Bước 3: Đúng lúc ảnh nở xong (sau 2.5s), toàn bộ phần ảnh và ngày tháng phóng to kèm bóng sáng trái tim bao trùm nhấp nháy phía sau
             setTimeout(() => {
                 dateBanner.classList.add('emphasize');
             }, 2500);
